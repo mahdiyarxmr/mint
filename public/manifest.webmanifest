@@ -1,0 +1,43 @@
+{
+  "name": "Mint — Design Your Digital World",
+  "short_name": "Mint",
+  "description": "Skins, cases, wallpapers and more. Design them with AI, your own creativity, and our tools.",
+  "id": "/",
+  "start_url": "/?src=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#05081F",
+  "theme_color": "#05081F",
+  "dir": "auto",
+  "lang": "fa-IR",
+  "categories": ["design", "graphics", "productivity", "shopping"],
+  "icons": [
+    { "src": "/img/brand/mark-96.png",  "sizes": "96x96",   "type": "image/png", "purpose": "any" },
+    { "src": "/img/brand/mark-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/img/brand/mark-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/img/brand/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/img/brand/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "AI Studio",
+      "short_name": "AI",
+      "url": "/ai-studio?src=pwa",
+      "icons": [{ "src": "/img/brand/mark-96.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Editor",
+      "short_name": "Editor",
+      "url": "/editor?src=pwa",
+      "icons": [{ "src": "/img/brand/mark-96.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Templates",
+      "short_name": "Templates",
+      "url": "/templates?src=pwa",
+      "icons": [{ "src": "/img/brand/mark-96.png", "sizes": "96x96", "type": "image/png" }]
+    }
+  ]
+}

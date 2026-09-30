@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120" role="img" aria-label="Mint">
+  <defs>
+    <linearGradient id="g" x1="26" y1="26" x2="106" y2="106" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B6BFF"/><stop offset="1" stop-color="#5436D6"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="120" rx="20" fill="#05081F"/>
+  <g transform="translate(26 26) scale(1.7)">
+    <rect width="40" height="40" rx="12.5" fill="url(#g)"/>
+    <path d="M10.6 28.6V16.4c0-2.2 2.7-3.1 4-1.4l4.2 5.5c.6.8 1.8.8 2.4 0l4.2-5.5c1.3-1.7 4-.8 4 1.4v12.2"
+          stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <circle cx="29.4" cy="10.6" r="2.5" fill="#E3D9FF"/>
+  </g>
+  <text x="124" y="72" font-family="Vazirmatn, Inter, system-ui, -apple-system, Segoe UI, sans-serif"
+        font-size="46" font-weight="800" letter-spacing="-1.2" fill="#ECEAFF">Mint</text>
+  <text x="126" y="93" font-family="Vazirmatn, Inter, system-ui, sans-serif"
+        font-size="13.5" font-weight="500" letter-spacing="2.6" fill="#8B86BE">DESIGN YOUR DEVICES</text>
+</svg>

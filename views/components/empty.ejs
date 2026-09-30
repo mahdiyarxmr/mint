@@ -1,0 +1,8 @@
+<div class="empty">
+  <div class="ic"><%- icon(typeof ic !== 'undefined' ? ic : 'search') %></div>
+  <h3><%= heading %></h3>
+  <p><%= body %></p>
+  <% if (typeof cta !== 'undefined' && cta) { %>
+    <a href="<%= cta.href %>" class="btn btn-primary"><%- icon('plus') %> <%= cta.label %></a>
+  <% } %>
+</div>

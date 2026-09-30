@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+
+<div class="shell">
+  <aside class="side" aria-label="<%= t('tpl.title') %>">
+    <% categories.forEach(c => { %>
+      <a href="/templates?cat=<%= c.slug %><%= q ? '&q='+encodeURIComponent(q) : '' %>" class="<%= cat===c.slug ? 'on':'' %>">
+        <%- icon(c.icon) %> <%= L(c,'name') %>
+      </a>
+    <% }) %>
+  </aside>
+
+  <main>
+    <div class="phead between" style="flex-wrap:wrap;gap:14px">
+      <div>
+        <h1><%= t('tpl.title') %></h1>
+        <p><%= t('tpl.lede') %></p>
+      </div>
+      <form class="row gap8" method="get" action="/templates" style="flex-wrap:wrap">
+        <input type="hidden" name="cat" value="<%= cat %>">
+        <div class="field" style="height:36px;width:220px">
+          <%- icon('search') %>
+          <input type="search" name="q" value="<%= q %>" placeholder="<%= t('tpl.searchPh') %>">
+        </div>
+        <select name="sort" class="bare" onchange="this.form.submit()">
+          <option value="popular" <%= sort==='popular'?'selected':'' %>><%= t('tpl.popular') %></option>
+          <option value="new" <%= sort==='new'?'selected':'' %>><%= t('tpl.newest') %></option>
+          <option value="likes" <%= sort==='likes'?'selected':'' %>><%= t('tpl.mostLiked') %></option>
+        </select>
+        <button class="btn btn-ghost btn-sm"><%= t('tpl.apply') %></button>
+      </form>
+    </div>
+
+    <% if (q) { %>
+      <p class="muted" style="margin-bottom:14px;font-size:13.5px">
+        <%= num(list.length) %> <%= t('tpl.results') %> «<b style="color:var(--text)"><%= q %></b>»
+        · <a href="/templates?cat=<%= cat %>" class="link-more"><%= t('tpl.clear') %></a>
+      </p>
+    <% } %>
+
+    <% if (list.length) { %>
+      <div class="grid g4">
+        <% list.forEach(t2 => { %><%- include('../components/tcard', { t2 }) %><% }) %>
+      </div>
+    <% } else { %>
+      <%- include('../components/empty', {
+        ic:'search', heading:t('tpl.emptyH'), body:t('tpl.emptyB'),
+        cta:{ href:'/editor', label:t('tpl.emptyCta') } }) %>
+    <% } %>
+  </main>
+</div>
+
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

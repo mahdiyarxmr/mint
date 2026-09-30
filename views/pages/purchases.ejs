@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+<% const total = items.reduce((s,i)=>s+i.price,0); %>
+<div class="shell">
+  <%- include('../partials/sidebar') %>
+  <main>
+    <div class="phead"><h1><%= t('pu.title') %></h1><p><%= num(items.length) %> <%= t('pu.orders') %> · <%= money(total) %> <%= t('pu.lifetime') %></p></div>
+    <div class="card" style="overflow:hidden">
+      <table class="table">
+        <thead><tr><th><%= t('pu.item') %></th><th><%= t('pu.seller') %></th><th><%= t('pu.invoice') %></th>
+          <th><%= t('pu.date') %></th><th style="text-align:<%= rtl?'left':'right' %>"><%= t('pu.total') %></th></tr></thead>
+        <tbody>
+        <% items.forEach(p => { %>
+          <tr>
+            <td><div class="row gap12"><img src="/img/<%= p.img %>.webp" alt="" style="width:42px;height:32px;border-radius:6px;object-fit:cover"><b><%= L(p,'title') %></b></div></td>
+            <td class="muted ltr"><%= p.seller %></td>
+            <td class="muted ltr" style="font-family:ui-monospace,monospace;font-size:12px"><%= p.invoice %></td>
+            <td class="muted"><%= L(p,'date') %></td>
+            <td style="text-align:<%= rtl?'left':'right' %>;font-weight:700"><%= money(p.price) %></td>
+          </tr>
+        <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:12px;margin-top:14px"><%= t('pu.refund') %> <a href="/help" style="color:var(--primary-hi)"><%= t('pu.contact') %></a></p>
+  </main>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

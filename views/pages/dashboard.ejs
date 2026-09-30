@@ -1,0 +1,89 @@
+<%- include('../partials/head') %>
+<% const lv = db.levelFor(user.xp); const next = db.levels.find(l => l.level === lv.level+1) || lv;
+   const pct = Math.min(100, Math.round((user.xp - lv.min) / Math.max(1,(next.min - lv.min)) * 100)); %>
+
+<div class="shell">
+  <%- include('../partials/sidebar') %>
+
+  <main>
+    <div class="dash-grid">
+
+      <div class="card pad-lg">
+        <div class="row gap16" style="flex-wrap:wrap">
+          <div class="avatar" style="width:66px;height:66px;font-size:22px">MT</div>
+          <div style="flex:1;min-width:150px">
+            <h2 style="font-size:20px"><%= L(user,'name') %></h2>
+            <p class="muted" style="font-size:13px"><span class="ltr"><%= user.handle %></span></p>
+            <span class="badge badge-pro" style="margin-top:7px"><%- icon('spark') %> <%= L(user,'member') %></span>
+          </div>
+        </div>
+
+        <div class="stats" style="margin:20px 0">
+          <div class="stat"><b><%= num(user.designs) %></b><small><%= t('db.designs') %></small></div>
+          <div class="stat"><b><%= num(user.favorites) %></b><small><%= t('db.favorites') %></small></div>
+          <div class="stat"><b><%= num(user.purchases) %></b><small><%= t('db.purchasesN') %></small></div>
+        </div>
+
+        <a href="/profile" class="btn btn-primary btn-block"><%- icon('user') %> <%= t('db.editProfile') %></a>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="card pad">
+          <div class="cap" style="margin-bottom:12px"><%= t('db.quickActions') %></div>
+          <a href="/editor" class="btn btn-primary btn-block" style="margin-bottom:8px"><%- icon('plus') %> <%= t('db.createNew') %></a>
+          <a href="/ai-studio" class="btn btn-ghost btn-block" style="margin-bottom:8px"><%- icon('bot') %> <%= t('db.aiStudio') %></a>
+          <a href="/templates" class="btn btn-ghost btn-block"><%- icon('grid') %> <%= t('db.browseTpl') %></a>
+        </div>
+
+        <div class="card pad">
+          <div class="between" style="margin-bottom:11px">
+            <div><div class="cap"><%= t('db.level') %> <%= num(lv.level) %></div><b style="font-size:15px"><%= L(lv,'name') %></b></div>
+            <span class="muted" style="font-size:12px"><%= num(user.xp) %> / <%= num(next.min) %> <%= t('lb.xp') %></span>
+          </div>
+          <div class="xpbar"><i style="width:<%= pct %>%"></i></div>
+          <p class="muted fs115" style="margin-top:9px"><%= num(Math.max(0, next.min - user.xp)) %> <%= t('db.xpTo') %> <b style="color:var(--secondary)"><%= L(next,'name') %></b></p>
+        </div>
+
+        <div class="card pad">
+          <div class="between" style="margin-bottom:11px">
+            <div class="cap"><%= t('db.quests') %></div>
+            <span class="row gap8" style="font-size:12px;color:var(--warn)"><%- icon('flame') %> <%= num(user.streak) %> <%= t('db.streak') %></span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <% quests.forEach(qq => { %>
+              <div>
+                <div class="between" style="margin-bottom:5px">
+                  <span style="font-size:12.5px;font-weight:600"><%= L(qq,'name') %></span>
+                  <span class="muted fs11" ><%= num(qq.xp) %>+ <%= t('lb.xp') %></span>
+                </div>
+                <div class="xpbar" style="height:5px"><i style="width:<%= Math.round(qq.progress/qq.goal*100) %>%"></i></div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sect-head" style="margin-top:32px">
+      <h2 style="font-size:19px"><%= t('db.recent') %></h2>
+      <a href="/projects" class="link-more"><%= t('home.viewAll') %> <%- icon('arrow') %></a>
+    </div>
+    <div class="grid g4">
+      <% designs.slice(0,4).forEach(d => { %>
+        <article class="tcard rv">
+          <div class="thumb"><img src="/img/<%= d.img %>.webp" alt="<%= L(d,'title') %>" loading="lazy">
+            <div class="tags"><span class="badge <%= d.status==='published'?'badge-free':'badge-pro' %>"><%= d.status==='published'?t('db.published'):t('db.draft') %></span></div>
+            <div class="hover"><a href="/editor" class="btn btn-primary btn-sm"><%- icon('layers') %> <%= t('db.open') %></a></div>
+          </div>
+          <div class="meta">
+            <div><h4><%= L(d,'title') %></h4><small><%= L(d,'edited') %></small></div>
+            <span class="row gap8 muted fs115" ><%- icon('heart') %> <%= num(d.likes) %></span>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </main>
+</div>
+
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

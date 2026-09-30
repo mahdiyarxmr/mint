@@ -1,0 +1,43 @@
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="/" class="logo" style="margin-bottom:14px"><%- brandMark(34) %><%- brandWord(22) %></a>
+      <h2 style="font-size:19px;margin:6px 0 9px"><%= t('ft.tagline') %></h2>
+      <p class="muted" style="font-size:13.5px;max-width:280px"><%= t('ft.lede') %></p>
+      <div class="socials">
+        <% ['msg','users','image','video'].forEach(i => { %>
+          <span class="iconbtn" style="width:33px;height:33px"><%- icon(i) %></span>
+        <% }) %>
+      </div>
+    </div>
+    <div>
+      <h5><%= t('ft.quick') %></h5>
+      <ul>
+        <li><a href="/"><%= t('nav.home') %></a></li>
+        <li><a href="/templates"><%= t('nav.templates') %></a></li>
+        <li><a href="/marketplace"><%= t('nav.marketplace') %></a></li>
+        <li><a href="/ai-studio"><%= t('nav.ai') %></a></li>
+        <li><a href="/explore"><%= t('nav.explore') %></a></li>
+      </ul>
+    </div>
+    <div>
+      <h5><%= t('ft.support') %></h5>
+      <ul>
+        <li><a href="/help"><%= t('hp.title') %></a></li>
+        <li><a href="/legal?doc=terms"><%= t('lg.terms') %></a></li>
+        <li><a href="/legal?doc=privacy"><%= t('lg.privacy') %></a></li>
+        <li><a href="/legal?doc=licenses"><%= t('lg.licenses') %></a></li>
+        <li><a href="/pricing"><%= lang==='fa' ? 'قیمت‌گذاری' : 'Pricing' %></a></li>
+      </ul>
+    </div>
+    <div>
+      <h5><%= t('ft.contact') %></h5>
+      <ul>
+        <li class="row gap8" style="color:var(--muted);font-size:13px"><%- icon('user') %> <%= lang==='fa' ? 'مهدیار توکلی' : 'Mahdiyar Tavakoli' %></li>
+        <li><a href="mailto:hello@mint.design" class="row gap8"><%- icon('mail') %> <span class="ltr">hello@mint.design</span></a></li>
+        <li class="row gap8" style="color:var(--muted);font-size:13px"><%- icon('store') %> <%= lang==='fa' ? 'مشهد، ایران' : 'Mashhad, Iran' %></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-b"><%= t('ft.rights') %></div>
+</footer>

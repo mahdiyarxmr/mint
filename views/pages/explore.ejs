@@ -1,0 +1,27 @@
+<%- include('../partials/head') %>
+
+<div class="wrap" style="padding-top:28px;padding-bottom:56px">
+  <div class="phead">
+    <h1><%= t('exp.title') %></h1>
+    <p><%= t('exp.lede') %></p>
+  </div>
+
+  <div class="tabs" style="margin-bottom:22px">
+    <% tags.forEach(g => { %>
+      <a href="/explore?tag=<%= encodeURIComponent(g) %>" class="<%= activeTag===g?'on':'' %>"><%= g==='All' ? t('exp.all') : tag(g) %></a>
+    <% }) %>
+  </div>
+
+  <% if (list.length) { %>
+    <div class="grid g4">
+      <% list.forEach(t2 => { %><%- include('../components/tcard', { t2 }) %><% }) %>
+    </div>
+  <% } else { %>
+    <%- include('../components/empty', {
+      ic:'image', heading:t('exp.emptyH'), body:t('exp.emptyB'),
+      cta:{ href:'/editor', label:t('exp.emptyCta') } }) %>
+  <% } %>
+</div>
+
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<div class="shell">
+  <%- include('../partials/sidebar') %>
+  <main>
+    <div class="phead between" style="flex-wrap:wrap;gap:12px">
+      <div><h1><%= t('db.projTitle') %></h1><p><%= num(designs.length) %> <%= t('db.projLede') %></p></div>
+      <a href="/editor" class="btn btn-primary"><%- icon('plus') %> <%= t('db.newDesign') %></a>
+    </div>
+    <div class="tabs" style="margin-bottom:20px">
+      <a href="/projects" class="on"><%= t('db.allT') %></a><a href="/projects"><%= t('db.pubT') %></a><a href="/projects"><%= t('db.draftT') %></a>
+    </div>
+    <div class="grid g4">
+      <% designs.forEach(d => { %>
+        <article class="tcard rv">
+          <div class="thumb"><img src="/img/<%= d.img %>.webp" alt="<%= L(d,'title') %>" loading="lazy">
+            <div class="tags"><span class="badge <%= d.status==='published'?'badge-free':'badge-pro' %>"><%= d.status==='published'?t('db.published'):t('db.draft') %></span></div>
+            <div class="hover">
+              <a href="/editor" class="btn btn-primary btn-sm"><%- icon('layers') %> <%= t('db.open') %></a>
+              <button class="btn btn-ghost btn-sm js-toast" data-msg="<%= t('x.duplicated') %> «<%= L(d,'title') %>»"><%- icon('copy') %></button>
+            </div>
+          </div>
+          <div class="meta"><div><h4><%= L(d,'title') %></h4><small><%= L(d,'edited') %></small></div>
+            <span class="row gap8 muted fs115" ><%- icon('heart') %> <%= num(d.likes) %></span></div>
+        </article>
+      <% }) %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

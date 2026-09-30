@@ -1,0 +1,14 @@
+{
+  "name": "mint",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "description": "Mint — multi-page digital design platform. Zero npm dependencies; runs on Node alone.",
+  "dependencies": {},
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}

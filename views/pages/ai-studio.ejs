@@ -1,0 +1,81 @@
+<%- include('../partials/head') %>
+<% const styleFa = {'Gaming setup':'میز گیمینگ','Anime style':'سبک انیمه','Minimalist':'مینیمال',
+  'Abstract':'انتزاعی','Fantasy':'فانتزی','Cyberpunk':'سایبرپانک'}; %>
+
+<div class="wrap" style="padding-top:26px;padding-bottom:56px">
+  <div class="ai-hero" style="margin-bottom:28px">
+    <div style="position:relative;z-index:1">
+      <h1 style="font-size:clamp(25px,3.4vw,38px);margin-bottom:13px"><%= t('ai.title1') %><br><span class="grad"><%= t('ai.title2') %></span></h1>
+      <p class="t2" style="max-width:450px;margin-bottom:22px"><%= t('home.aiLede') %></p>
+
+      <form id="aiForm" class="prompt" style="max-width:520px">
+        <textarea id="aiPrompt" name="prompt" rows="2" maxlength="300" placeholder="<%= t('home.promptPh') %>"><%= query.q || '' %></textarea>
+        <button class="btn btn-primary" id="aiGo" style="width:42px;height:42px;padding:0;border-radius:50%" aria-label="<%= t('ai.results') %>"><%- icon('arrow') %></button>
+      </form>
+
+      <div style="margin-top:18px">
+        <span class="cap" style="display:block;margin-bottom:2px"><%- icon('phone',13) %> <%= t('ai.device') %></span>
+        <div class="aidev" id="aiDevice" role="group" aria-label="<%= t('ai.device') %>">
+          <% allDevices.forEach((d, i) => { %>
+            <button type="button" data-dev="<%= d.id %>" data-w="<%= d.w %>" data-h="<%= d.h %>"
+                    class="<%= (query.device ? query.device === d.id : i === 0) ? 'on' : '' %>">
+              <%- icon(d.icon, 15) %> <%= L(d,'name') %>
+              <span class="ratio ltr"><%= d.w %>×<%= d.h %></span>
+            </button>
+          <% }) %>
+        </div>
+        <p class="muted fs115" style="margin-top:6px"><%= t('ai.deviceHint') %></p>
+      </div>
+
+      <div class="chips" style="margin-top:18px" id="styleChips">
+        <% styles.forEach(s => { %>
+          <button type="button" class="chip <%= query.style===s ? 'on':'' %>" data-style="<%= s %>"><%- icon('spark') %> <%= lang==='fa' ? (styleFa[s]||s) : s %></button>
+        <% }) %>
+      </div>
+
+      <div class="row gap12" style="margin-top:22px;flex-wrap:wrap">
+        <div class="row gap8" style="font-size:12.5px;color:var(--muted)">
+          <%- icon('spark') %> <b style="color:var(--text)" id="creditCount"><%= num(user.credits) %></b> / <%= num(user.creditsTotal) %> <%= t('ai.credits') %>
+        </div>
+        <div class="xpbar" style="width:150px"><i style="width:<%= Math.round(user.credits/user.creditsTotal*100) %>%"></i></div>
+        <span class="muted" style="font-size:12px"><%= t('ai.perGen') %></span>
+      </div>
+    </div>
+
+    <div class="bot" style="position:relative;z-index:1">
+      <img src="/img/ai-bot.webp" alt="Mint AI" style="border-radius:var(--r-xl)">
+    </div>
+  </div>
+
+  <section id="resultsSection" class="hide" style="margin-bottom:34px">
+    <div class="sect-head"><h2 style="font-size:19px"><%= t('ai.results') %></h2>
+      <button class="link-more" id="regen"><%- icon('redo') %> <%= t('ai.regen') %></button></div>
+    <div class="grid g4" id="resultsGrid"></div>
+    <div class="gen-meta" id="genMeta"></div>
+  </section>
+
+  <section>
+    <div class="sect-head">
+      <h2 style="font-size:19px"><%= t('ai.recent') %></h2>
+      <span class="muted" style="font-size:13px"><%= num(history.length) %> <%= t('ai.thisWeek') %></span>
+    </div>
+    <div class="grid g4">
+      <% history.forEach(h => { %>
+        <article class="tcard rv">
+          <div class="thumb"><img src="/img/<%= h.img %>.webp" alt="<%= L(h,'prompt') %>" loading="lazy">
+            <div class="hover"><a href="/editor" class="btn btn-primary btn-sm"><%- icon('arrow') %> <%= t('ai.toEditor') %></a></div>
+          </div>
+          <div class="meta">
+            <div style="min-width:0">
+              <h4 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px"><%= L(h,'prompt') %></h4>
+              <small><%= L(h,'time') %> <%= t('ai.ago') %> · <%= num(h.credits) %> <%= t('ai.credits') %></small>
+            </div>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+</div>
+
+<%- include('../partials/foot') %>
+<%- include('../partials/tail', { scripts: ['/js/ai.js'] }) %>

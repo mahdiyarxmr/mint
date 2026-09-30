@@ -1,0 +1,45 @@
+<!-- mobile tab bar -->
+<nav class="tabbar" aria-label="<%= t('nav.menu') %>">
+  <a href="/" class="<%= path==='/'?'on':'' %>"><%- icon('home', 20) %><%= t('nav.home') %></a>
+  <a href="/templates" class="<%= path==='/templates'?'on':'' %>"><%- icon('grid', 20) %><%= t('nav.templates') %></a>
+  <a href="/editor" aria-label="<%= t('nav.createNew') %>"><span class="fab"><%- icon('plus', 21) %></span></a>
+  <a href="/marketplace" class="<%= path==='/marketplace'?'on':'' %>"><%- icon('store', 20) %><%= t('nav.marketplace') %></a>
+  <a href="/dashboard" class="<%= path==='/dashboard'?'on':'' %>"><%- icon('user', 20) %><%= t('db.dashboard') %></a>
+</nav>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+</div><!-- /#app -->
+
+<script>
+/* strings the client modules need, from the active locale */
+window.MINT = {
+  lang: <%- JSON.stringify(lang) %>,
+  rtl: <%= rtl %>,
+  t: <%- JSON.stringify({
+    deviceSet:t('ed.deviceSet'), saving:t('ed.saving'), savedV:t('ed.savedV'), offline:t('ed.offline'),
+    stickerAdded:t('ed.stickerAdded'), exportQueued:t('ed.exportQueued'),
+    savedXp:t('ed.savedXp'), aiHint:t('ed.aiHint'),
+    needPrompt:t('ai.needPrompt'), rateLimited:t('ai.rateLimited'), noCredits:t('ai.noCredits'),
+    failed:t('ai.failed'), netError:t('ai.netError'), done:t('ai.done'),
+    justNow:t('ai.justNow'), toEditor:t('ai.toEditor'), dlStarted:t('ai.dlStarted'),
+    noMatch:t('x.noMatch'), liked:t('x.liked'), checkout:t('x.checkout'), done2:t('x.done'),
+    template:t('x.template'), product:t('x.product'),
+    coinShort:t('coins.short'), coinBought:t('coins.bought'), coinName:t('coins.name'),
+    coinFallback:t('coins.usedAsFallback'), coinSpent:t('coins.spentOnAi'), coinNeed:t('coins.need'),
+    admDone:t('adm.done'), admApply:t('adm.apply'), admGrantTo:t('adm.grantTo'),
+    annPosted:t('ann.posted'), annSubject:t('ann.subject'),
+    setSaved:t('set.saved'), setTesting:t('set.testing'), setTestOk:t('set.testOk'),
+    setTestFail:t('set.testFail'), setResetOk:t('set.resetOk'),
+    admDeleted:t('adm.deleted'), admConfirmDelete:t('adm.confirmDelete'),
+    admSelected:t('adm.selected'), admBulk:t('adm.bulk'), admBulkDone:t('adm.bulkDone'),
+    aiLive:t('ai.live'), aiOffline:t('ai.offline'), aiTranslated:t('ai.translated'),
+    aiGenerating:t('ai.generating'), aiProvider:t('ai.provider'),
+    'pwa.install':t('pwa.install'), 'pwa.offline':t('pwa.offline')
+  }) %>
+};
+</script>
+<script src="/js/mint.js"></script>
+<script src="/js/pwa.js" defer></script>
+<% if (typeof scripts !== 'undefined') { scripts.forEach(s => { %><script src="<%= s %>"></script><% }) } %>
+</body>
+</html>

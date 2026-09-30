@@ -1,0 +1,14 @@
+<%- include('../partials/head') %>
+<div class="wrap" style="padding:80px 22px;display:grid;place-items:center;min-height:52vh;text-align:center">
+  <div>
+    <div style="font-size:78px;font-weight:850;letter-spacing:-.05em" class="grad ltr">404</div>
+    <h1 style="font-size:24px;margin:8px 0 10px"><%= t('e404.h') %></h1>
+    <p class="muted" style="max-width:380px;margin:0 auto 22px"><%= t('e404.b') %></p>
+    <div class="row gap12" style="justify-content:center;flex-wrap:wrap">
+      <a href="/" class="btn btn-primary"><%- icon('home') %> <%= t('e404.home') %></a>
+      <a href="/templates" class="btn btn-ghost"><%= t('e404.tpl') %></a>
+    </div>
+  </div>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

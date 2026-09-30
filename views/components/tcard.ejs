@@ -1,0 +1,19 @@
+<article class="tcard rv" data-id="<%= t2.id %>">
+  <div class="thumb">
+    <img src="/img/<%= t2.img %>.webp" alt="<%= L(t2,'title') %>" loading="lazy">
+    <div class="tags">
+      <% (t2.tags||[]).slice(0,1).forEach(g => { %><span class="badge badge-pro"><%= tag(g) %></span><% }) %>
+    </div>
+    <div class="hover">
+      <a href="/editor?t=<%= t2.id %>" class="btn btn-primary btn-sm"><%- icon('spark') %> <%= t('tpl.use') %></a>
+      <button class="btn btn-ghost btn-sm js-like" data-n="<%= t2.likes %>"><%- icon('heart') %> <span><%= num(t2.likes) %></span></button>
+    </div>
+  </div>
+  <div class="meta">
+    <div style="min-width:0">
+      <h4 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><%= L(t2,'title') %></h4>
+      <small><%= L(t2,'catLabel') %></small>
+    </div>
+    <span class="badge <%= t2.tier==='free' ? 'badge-free' : 'badge-pro' %>"><%= t2.tier==='free' ? t('tpl.free') : t('tpl.pro') %></span>
+  </div>
+</article>

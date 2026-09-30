@@ -1,0 +1,27 @@
+# ── runtime state ────────────────────────────────────────────────────────
+# Both are created on first run. Delete data/db.json to reset to seed data.
+data/db.json
+data/config.json
+
+# generated artwork
+public/img/gen/
+
+# secrets — never commit; copy .env.example instead
+.env
+
+# ── dependencies ─────────────────────────────────────────────────────────
+# There are none. Kept so an accidental `npm i something` never lands here.
+node_modules/
+
+# ── tooling ──────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# ── editors / OS ─────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini

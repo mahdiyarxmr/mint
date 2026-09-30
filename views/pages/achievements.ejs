@@ -1,0 +1,49 @@
+<%- include('../partials/head') %>
+<% const got = achievements.filter(a=>a.earned).length; %>
+<div class="shell">
+  <%- include('../partials/sidebar') %>
+  <main>
+    <div class="phead"><h1><%= t('ach.title') %></h1>
+      <p><%= num(got) %> <%= t('ach.of') %> <%= num(achievements.length) %> <%= t('ach.unlocked') %> · <%= num(user.xp) %> <%= t('ach.totalXp') %></p></div>
+
+    <div class="card pad" style="margin-bottom:22px">
+      <div class="between" style="margin-bottom:10px">
+        <span class="cap"><%= t('ach.progress') %></span>
+        <span class="muted" style="font-size:12px"><%= num(Math.round(got/achievements.length*100)) %>%</span>
+      </div>
+      <div class="xpbar"><i style="width:<%= Math.round(got/achievements.length*100) %>%"></i></div>
+    </div>
+
+    <div class="sect-head"><h2 style="font-size:18px"><%= t('ach.activeQuests') %></h2></div>
+    <div class="grid g2" style="margin-bottom:30px">
+      <% quests.forEach(qq => { %>
+        <div class="card pad">
+          <div class="between" style="margin-bottom:8px">
+            <b style="font-size:14px"><%= L(qq,'name') %></b>
+            <span class="badge badge-pro"><%= num(qq.xp) %>+ <%= t('lb.xp') %></span>
+          </div>
+          <p class="muted" style="font-size:12.5px;margin-bottom:11px"><%= L(qq,'desc') %></p>
+          <div class="xpbar" style="height:6px"><i style="width:<%= Math.round(qq.progress/qq.goal*100) %>%"></i></div>
+          <p class="muted fs11" style="margin-top:7px"><%= num(qq.progress) %> / <%= num(qq.goal) %></p>
+        </div>
+      <% }) %>
+    </div>
+
+    <div class="sect-head"><h2 style="font-size:18px"><%= t('ach.badges') %></h2></div>
+    <div class="grid g4">
+      <% achievements.forEach(a => { %>
+        <div class="card pad rv" style="text-align:center;<%= a.earned?'':'opacity:.5' %>">
+          <div style="width:52px;height:52px;border-radius:15px;margin:0 auto 12px;display:grid;place-items:center;
+              background:<%= a.earned?'linear-gradient(145deg,#8B6BFF,#5436D6)':'rgba(255,255,255,.05)' %>;
+              color:<%= a.earned?'#fff':'var(--muted-2)' %>;
+              box-shadow:<%= a.earned?'0 8px 22px -6px rgba(109,74,255,.8)':'none' %>"><%- icon(a.icon, 22) %></div>
+          <b style="font-size:13.5px;display:block"><%= L(a,'name') %></b>
+          <p class="muted fs115" style="margin:5px 0 10px"><%= L(a,'desc') %></p>
+          <span class="badge <%= a.earned?'badge-free':'badge-pro' %>"><%= a.earned ? t('ach.earned') : num(a.xp)+'+ '+t('lb.xp') %></span>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

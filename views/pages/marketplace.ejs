@@ -1,0 +1,54 @@
+<%- include('../partials/head') %>
+<% const kindLabel = { 'All':t('mkt.all'), 'PSD Files':t('mkt.psd'), 'Bundles':t('mkt.bundles'), 'Assets':t('mkt.assets') }; %>
+
+<div class="wrap" style="padding-top:28px;padding-bottom:56px">
+  <div class="phead between" style="flex-wrap:wrap;gap:14px">
+    <div>
+      <h1><%= t('mkt.title') %></h1>
+      <p><%= t('mkt.lede') %></p>
+    </div>
+    <form method="get" action="/marketplace" class="row gap8">
+      <input type="hidden" name="kind" value="<%= kind %>">
+      <div class="field" style="height:38px;width:240px">
+        <%- icon('search') %><input type="search" name="q" value="<%= q %>" placeholder="<%= t('mkt.searchPh') %>">
+      </div>
+      <button class="btn btn-ghost btn-sm"><%= t('mkt.search') %></button>
+    </form>
+  </div>
+
+  <div class="between" style="margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div class="tabs">
+      <% kinds.forEach(k => { %>
+        <a href="/marketplace?kind=<%= encodeURIComponent(k) %>" class="<%= kind===k?'on':'' %>"><%= kindLabel[k] || k %></a>
+      <% }) %>
+    </div>
+    <div class="row gap8">
+      <span class="muted" style="font-size:13px"><%= num(list.length) %> <%= t('mkt.assetsCount') %></span>
+      <select class="bare">
+        <option><%= t('mkt.filterFeatured') %></option><option><%= t('mkt.priceLow') %></option>
+        <option><%= t('mkt.priceHigh') %></option><option><%= t('mkt.topRated') %></option>
+      </select>
+    </div>
+  </div>
+
+  <% if (list.length) { %>
+    <div class="grid g4">
+      <% list.forEach(p => { %><%- include('../components/pcard', { p }) %><% }) %>
+    </div>
+  <% } else { %>
+    <%- include('../components/empty', {
+      ic:'store', heading:t('mkt.emptyH'), body:t('mkt.emptyB'),
+      cta:{ href:'/marketplace', label:t('mkt.emptyCta') } }) %>
+  <% } %>
+
+  <div class="card pad-lg" style="margin-top:34px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+    <div style="flex:1;min-width:250px">
+      <h3 style="font-size:18px;margin-bottom:6px"><%= t('mkt.sellH') %></h3>
+      <p class="muted" style="font-size:13.5px"><%= t('mkt.sellB') %></p>
+    </div>
+    <a href="/settings?tab=billing" class="btn btn-primary"><%- icon('upload') %> <%= t('mkt.sellCta') %></a>
+  </div>
+</div>
+
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

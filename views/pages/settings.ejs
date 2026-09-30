@@ -1,0 +1,94 @@
+<%- include('../partials/head') %>
+<% const tabs = [['account',t('st.account')],['security',t('st.security')],['preferences',t('st.prefs')],
+                 ['notifications',t('st.notifs')],['billing',t('st.billing')]]; %>
+<div class="shell">
+  <%- include('../partials/sidebar') %>
+  <main>
+    <div class="phead"><h1><%= t('st.title') %></h1><p><%= t('st.lede') %></p></div>
+    <div class="tabs" style="margin-bottom:22px">
+      <% tabs.forEach(([k,l]) => { %><a href="/settings?tab=<%= k %>" class="<%= tab===k?'on':'' %>"><%= l %></a><% }) %>
+    </div>
+
+    <div class="card pad-lg" style="max-width:660px">
+    <% if (tab==='account') { %>
+      <h3 style="margin-bottom:18px"><%= t('st.profile') %></h3>
+      <div class="row gap16" style="margin-bottom:22px">
+        <div class="avatar" style="width:62px;height:62px;font-size:20px">MT</div>
+        <div><button class="btn btn-ghost btn-sm js-toast" data-msg="<%= t('x.uploadDlg') %>"><%- icon('upload') %> <%= t('st.changePhoto') %></button>
+          <p class="muted fs115" style="margin-top:6px"><%= t('st.photoNote') %></p></div>
+      </div>
+      <label class="lbl"><%= t('st.displayName') %></label>
+      <div class="field field-sq" style="margin-bottom:15px"><input value="<%= L(user,'name') %>"></div>
+      <label class="lbl"><%= t('au.username') %></label>
+      <div class="field field-sq" style="margin-bottom:15px"><input value="<%= user.handle %>" class="ltr"></div>
+      <label class="lbl"><%= t('st.bio') %></label>
+      <div class="field field-sq" style="height:auto;padding:11px 13px;margin-bottom:18px">
+        <textarea style="flex:1;background:none;border:0;outline:0;resize:vertical;min-height:64px;font-size:13.5px"><%= L(user,'bio') %></textarea>
+      </div>
+      <button class="btn btn-primary js-toast" data-msg="<%= t('st.saved') %>"><%= t('st.save') %></button>
+
+    <% } else if (tab==='security') { %>
+      <h3 style="margin-bottom:18px"><%= t('st.pw') %></h3>
+      <label class="lbl"><%= t('st.pwCur') %></label>
+      <div class="field field-sq" style="margin-bottom:15px"><%- icon('lock') %><input type="password" placeholder="••••••••"></div>
+      <label class="lbl"><%= t('st.pwNew') %></label>
+      <div class="field field-sq" style="margin-bottom:18px"><%- icon('lock') %><input type="password" placeholder="<%= t('st.pwNote') %>"></div>
+      <button class="btn btn-primary js-toast" data-msg="<%= t('st.pwUpdated') %>" style="margin-bottom:26px"><%= t('st.pwUpdate') %></button>
+      <h3 style="margin-bottom:14px"><%= t('st.sessions') %></h3>
+      <div class="list">
+        <% (lang==='fa'
+            ? [['کروم · فرانکفورت، آلمان','نشست فعلی',true],['سافاری · آیفون','۲ روز پیش',false],['فایرفاکس · مشهد، ایران','هفته گذشته',false]]
+            : [['Chrome · Frankfurt, DE','Current session',true],['Safari · iPhone','2 days ago',false],['Firefox · Mashhad, IR','Last week',false]]
+           ).forEach(([d,tm,cur]) => { %>
+          <div class="lrow"><span class="iconbtn" style="flex:none"><%- icon('shield') %></span>
+            <div style="flex:1"><b style="font-size:13px"><%= d %></b><p class="muted fs115" ><%= tm %></p></div>
+            <% if (cur) { %><span class="badge badge-free"><%= t('st.current') %></span>
+            <% } else { %><button class="btn btn-quiet btn-sm js-toast" data-msg="<%= t('st.revoked') %>"><%= t('st.revoke') %></button><% } %>
+          </div>
+        <% }) %>
+      </div>
+
+    <% } else if (tab==='preferences') { %>
+      <h3 style="margin-bottom:18px"><%= t('st.prefs') %></h3>
+      <label class="lbl"><%= t('st.lang') %></label>
+      <div class="row gap8" style="margin-bottom:15px">
+        <a href="/settings?tab=preferences&lang=fa" class="btn <%= lang==='fa'?'btn-primary':'btn-ghost' %>" style="flex:1">فارسی</a>
+        <a href="/settings?tab=preferences&lang=en" class="btn <%= lang==='en'?'btn-primary':'btn-ghost' %>" style="flex:1">English</a>
+      </div>
+      <label class="lbl"><%= t('st.dir') %></label>
+      <select class="bare" style="width:100%;height:40px;margin-bottom:18px">
+        <option><%= t('st.dirAuto') %></option><option><%= t('st.dirLtr') %></option><option><%= t('st.dirRtl') %></option></select>
+      <label class="check" style="margin-bottom:11px"><input type="checkbox" checked> <%= t('st.reduceMotion') %></label>
+      <label class="check" style="margin-bottom:11px"><input type="checkbox" checked> <%= t('st.showGrid') %></label>
+      <label class="check" style="margin-bottom:18px"><input type="checkbox"> <%= t('st.autoplay') %></label>
+      <button class="btn btn-primary js-toast" data-msg="<%= t('st.prefsSaved') %>"><%= t('st.savePrefs') %></button>
+
+    <% } else if (tab==='notifications') { %>
+      <h3 style="margin-bottom:18px"><%= t('st.notifs') %></h3>
+      <% [['st.nLikes',true],['st.nFollows',true],['st.nSales',true],['st.nQuests',false],['st.nNews',false]].forEach(([k,on]) => { %>
+        <label class="check" style="margin-bottom:13px"><input type="checkbox" <%= on?'checked':'' %>> <%= t(k) %></label>
+      <% }) %>
+      <button class="btn btn-primary js-toast" data-msg="<%= t('st.notifSaved') %>" style="margin-top:8px"><%= t('st.save') %></button>
+
+    <% } else { %>
+      <h3 style="margin-bottom:8px"><%= t('st.curPlan') %></h3>
+      <div class="card pad" style="margin-bottom:22px;border-color:rgba(139,107,255,.45)">
+        <div class="between">
+          <div><b style="font-size:17px"><%= L(db.plans[1],'name') %></b>
+            <p class="muted" style="font-size:12.5px"><%= money(9) %> / <%= t('pr.month') %> · <%= t('st.renews') %> <%= lang==='fa'?'۲۲ مهر ۱۴۰۵':'14 Oct 2026' %></p></div>
+          <span class="badge badge-pro"><%= t('st.active') %></span>
+        </div>
+        <div class="xpbar" style="margin-top:14px"><i style="width:<%= Math.round(user.credits/user.creditsTotal*100) %>%"></i></div>
+        <p class="muted fs115" style="margin-top:7px"><%= num(user.credits) %> / <%= num(user.creditsTotal) %> <%= t('st.creditsLeft') %></p>
+      </div>
+      <div class="row gap12" style="flex-wrap:wrap">
+        <a href="/pricing" class="btn btn-primary"><%- icon('spark') %> <%= t('st.changePlan') %></a>
+        <button class="btn btn-ghost js-toast" data-msg="<%= t('st.invoicesMsg') %>"><%= t('st.invoices') %></button>
+        <button class="btn btn-quiet js-toast" data-msg="<%= t('st.cancelMsg') %>"><%= t('st.cancel') %></button>
+      </div>
+    <% } %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

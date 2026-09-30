@@ -1,0 +1,401 @@
+<%- include('../partials/head') %>
+<div class="wrap" style="padding-top:26px;padding-bottom:56px">
+  <div class="phead between" style="flex-wrap:wrap;gap:12px">
+    <div><h1><%= t('ad.title') %></h1><p><%= t('ad.lede') %></p></div>
+    <span class="badge badge-premium"><%= t('ad.staff') %></span>
+  </div>
+
+  <div class="tabs" style="margin-bottom:22px">
+    <% [['overview', t('ad.title'), 'grid'], ['users', t('adm.users'), 'users'],
+        ['announce', t('ann.title'), 'megaphone'],
+        ['settings', t('set.title'), 'settings']].forEach(([id, label, ic]) => { %>
+      <a href="/admin?tab=<%= id %>" class="<%= tab === id ? 'on' : '' %>"><%- icon(ic) %> <%= label %></a>
+    <% }) %>
+  </div>
+
+<% if (tab === 'overview') { %>
+  <div class="grid g4" style="margin-bottom:26px">
+    <% [[t('ad.users'), allUsers, 'users'], [t('ad.published'), 3204, 'store'],
+        [t('ad.pending'), 17, 'clock'], [t('ann.title'), anns.filter(a=>a.active).length, 'megaphone']].forEach(([l,v,i]) => { %>
+      <div class="card pad">
+        <div class="between" style="margin-bottom:9px">
+          <span class="cap"><%= l %></span>
+          <span class="iconbtn" style="width:29px;height:29px"><%- icon(i) %></span>
+        </div>
+        <b style="font-size:26px"><%= num(v) %></b>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="card pad" style="margin-bottom:26px">
+    <div class="between" style="flex-wrap:wrap;gap:12px;margin-bottom:12px">
+      <h2 style="font-size:16px"><%- icon('bot') %> <%= t('ai.provider') %></h2>
+      <span class="rolechip <%= aiCfg.keyed ? 'pro' : '' %>">
+        <%= aiCfg.keyed ? (lang==='fa' ? 'کلید فعال است' : 'API key active')
+                        : (lang==='fa' ? 'بدون کلید — سطح رایگان' : 'No key — free tier') %>
+      </span>
+    </div>
+    <div class="grid g3" style="gap:12px">
+      <div><span class="cap"><%= t('ai.provider') %></span><b class="ltr" style="display:block;font-size:15px"><%= aiCfg.provider %></b></div>
+      <div><span class="cap"><%= lang==='fa' ? 'ترجمهٔ فارسی' : 'Persian translation' %></span>
+           <b style="display:block;font-size:15px"><%= aiCfg.translate ? t('ann.active') : t('ann.hidden') %></b></div>
+      <div><span class="cap"><%= lang==='fa' ? 'دریافت کلید' : 'Get a key' %></span>
+           <a class="ltr" href="<%= aiCfg.site %>" target="_blank" rel="noopener"
+              style="display:block;font-size:14px;color:var(--primary-hi);font-weight:600"><%= aiCfg.site %></a></div>
+    </div>
+    <p class="muted" style="font-size:12px;margin-top:12px;line-height:1.7">
+      <%= lang==='fa'
+        ? 'ساخت تصویر همین حالا بدون کلید کار می‌کند. افزودن کلید رایگان، واترمارک را حذف و محدودیت درخواست را برمی‌دارد — کلید را در فایل .env با نام POLLINATIONS_TOKEN بگذارید.'
+        : 'Generation already works with no key. Adding a free key removes the watermark and lifts the rate limit — put it in .env as POLLINATIONS_TOKEN.' %>
+    </p>
+  </div>
+
+  <div class="sect-head"><h2 style="font-size:18px"><%= t('ad.queue') %></h2></div>
+  <div class="card" style="overflow:hidden">
+    <table class="table">
+      <thead><tr><th><%= t('ad.asset') %></th><th><%= t('pu.seller') %></th><th><%= t('ad.submitted') %></th>
+        <th><%= t('ad.state') %></th><th style="text-align:<%= rtl?'left':'right' %>"><%= t('ad.action') %></th></tr></thead>
+      <tbody>
+      <% const ago = lang==='fa' ? ['۲ ساعت','۵ ساعت','۱ روز','۲ روز','۳ روز'] : ['2h','5h','1d','2d','3d'];
+         products.slice(0,5).forEach((p,i) => { %>
+        <tr>
+          <td><div class="row gap12"><img src="/img/<%= p.img %>.webp" alt="" style="width:40px;height:30px;border-radius:6px;object-fit:cover"><b><%= L(p,'title') %></b></div></td>
+          <td class="muted"><span class="ltr"><%= p.seller %></span></td>
+          <td class="muted"><%= ago[i] %> <%= t('ai.ago') %></td>
+          <td><span class="rolechip"><%= t('ad.pending') %></span></td>
+          <td style="text-align:<%= rtl?'left':'right' %>">
+            <button class="btn btn-sm btn-primary js-toast" data-msg="<%= t('adm.done') %>"><%= t('ad.approve') %></button>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+<% } else if (tab === 'users') { %>
+  <div class="adm-grid">
+    <div class="card" style="overflow:hidden">
+      <div class="pad" style="padding-bottom:0">
+        <form method="GET" action="/admin" class="row gap8">
+          <input type="hidden" name="tab" value="users">
+          <div class="field" style="flex:1">
+            <%- icon('search') %>
+            <input name="q" value="<%= q %>" placeholder="<%= t('adm.searchUsers') %>" aria-label="<%= t('adm.searchUsers') %>">
+          </div>
+          <button class="btn btn-primary btn-sm" type="submit"><%= t('nav.searchShort') %></button>
+        </form>
+        <p class="muted" style="font-size:12px;margin:10px 0 0"><%= num(userList.length) %> / <%= num(allUsers) %></p>
+      </div>
+      <div style="overflow-x:auto;padding:14px 18px 18px">
+      <% if (!userList.length) { %>
+        <p class="muted" style="padding:30px 0;text-align:center"><%= t('adm.noUsers') %></p>
+      <% } else { %>
+        <table class="utable">
+          <thead><tr>
+            <th style="width:28px"><input type="checkbox" id="uAll" aria-label="<%= t('adm.selectAll') %>"></th>
+            <th><%= t('adm.user') %></th><th><%= t('adm.role') %></th><th><%= t('adm.plan') %></th>
+            <th><%= t('coins.name') %></th><th><%= t('adm.credits') %></th>
+            <th style="text-align:<%= rtl?'left':'right' %>"><%= t('adm.actions') %></th>
+          </tr></thead>
+          <tbody>
+          <% userList.forEach(u => { %>
+            <tr class="<%= u.banned ? 'banned' : '' %>" data-uid="<%= u.id %>">
+              <td><input type="checkbox" class="uSel" value="<%= u.id %>" aria-label="<%= u.username %>"></td>
+              <td>
+                <div class="row gap12">
+                  <span class="uav"><%= u.username.slice(0,2).toUpperCase() %></span>
+                  <div style="min-width:0">
+                    <b class="ltr" style="display:block"><%= u.username %></b>
+                    <span class="muted ltr fs115" ><%= u.email %></span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="rolechip <%= u.role==='admin'?'admin':'' %>"><%= u.role==='admin' ? t('adm.admin') : t('adm.member') %></span>
+                  <% if (u.banned) { %><span class="rolechip ban"><%= t('adm.banned') %></span><% } %></td>
+              <td>
+                <% if (u.planActive) { %>
+                  <span class="rolechip pro"><%= u.plan.toUpperCase() %></span>
+                  <div class="muted fs11" ><%= t('adm.until') %> <%= new Intl.DateTimeFormat(lang==='fa'?'fa-IR':'en-GB',{month:'short',day:'numeric'}).format(new Date(u.planUntil)) %></div>
+                <% } else { %><span class="muted"><%= t('adm.free') %></span><% } %>
+              </td>
+              <td class="mono js-coins"><%= num(u.coins) %></td>
+              <td class="mono js-credits"><%= num(u.credits) %></td>
+              <td style="text-align:<%= rtl?'left':'right' %>;white-space:nowrap">
+                <button class="btn btn-sm btn-ghost js-pick" data-uid="<%= u.id %>" data-un="<%= u.username %>"><%- icon('gift',14) %></button>
+                <button class="btn btn-sm btn-ghost js-edit" data-uid="<%= u.id %>"
+                        data-un="<%= u.username %>" data-em="<%= u.email %>" data-nm="<%= u.name %>"
+                        data-role="<%= u.role %>" data-coins="<%= u.coins %>" data-credits="<%= u.credits %>"
+                        data-banned="<%= u.banned ? 1 : 0 %>"><%- icon('edit',14) %> <%= t('adm.edit') %></button>
+              </td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+      </div>
+    </div>
+
+    <div class="card pad grantbox">
+      <h3 style="font-size:15px;margin-bottom:4px"><%= t('adm.grantTo') %> <b class="grad ltr" id="gTarget">—</b></h3>
+      <p class="muted" style="font-size:12px"><%= t('coins.value') %></p>
+
+      <label class="check" style="margin-top:10px">
+        <input type="checkbox" id="gBulk"> <%= t('adm.bulk') %> (<b id="gCount">0</b> <%= t('adm.selected') %>)
+      </label>
+
+      <label class="lbl"><%= t('adm.giveCoins') %></label>
+      <div class="row gap8">
+        <div class="field" style="flex:1"><input id="gCoins" type="number" value="100" min="0" step="10" class="ltr"></div>
+        <button class="btn btn-primary btn-sm" data-act="coins" data-src="gCoins"><%= t('adm.apply') %></button>
+      </div>
+
+      <label class="lbl"><%= t('adm.giveCredits') %></label>
+      <div class="row gap8">
+        <div class="field" style="flex:1"><input id="gCred" type="number" value="50" min="0" step="10" class="ltr"></div>
+        <button class="btn btn-primary btn-sm" data-act="credits" data-src="gCred"><%= t('adm.apply') %></button>
+      </div>
+
+      <label class="lbl"><%= t('adm.givePlan') %></label>
+      <div class="row gap8">
+        <select class="bare" id="gPlan" style="flex:1">
+          <option value="pro">Pro</option><option value="studio">Studio</option>
+        </select>
+        <div class="field" style="width:88px"><input id="gDays" type="number" value="30" min="1" class="ltr"></div>
+        <button class="btn btn-primary btn-sm" data-act="plan"><%= t('adm.apply') %></button>
+      </div>
+      <p class="muted fs11" style="margin-top:5px"><%= t('adm.days') %></p>
+
+      <label class="lbl"><%= t('adm.giftItem') %></label>
+      <div class="row gap8">
+        <select class="bare" id="gItem" style="flex:1">
+          <% products.forEach(p => { %><option value="<%= p.id %>"><%= L(p,'title') %></option><% }) %>
+        </select>
+        <button class="btn btn-primary btn-sm" data-act="gift"><%= t('adm.apply') %></button>
+      </div>
+    </div>
+  </div>
+
+<% } else if (tab === 'settings') { %>
+  <p class="muted" style="font-size:12.5px;margin:-8px 0 18px"><%- icon('info',13) %> <%= t('set.hint') %></p>
+  <div class="adm-grid">
+    <div class="card pad">
+      <h3 style="font-size:15px;margin-bottom:4px"><%- icon('bot') %> <%= t('set.ai') %></h3>
+
+      <label class="lbl" for="cProvider"><%= t('set.provider') %></label>
+      <select class="bare" id="cProvider" style="width:100%">
+        <% providers.forEach(pv => { %>
+          <option value="<%= pv %>" <%= cfg.provider === pv ? 'selected' : '' %>><%= pv %></option>
+        <% }) %>
+      </select>
+
+      <label class="lbl" for="cModel"><%= t('set.model') %></label>
+      <div class="field"><input id="cModel" class="ltr" value="<%= cfg.model %>" placeholder="<%= t('set.modelPh') %>"></div>
+
+      <!-- your own worker / any bearer+prompt endpoint -->
+      <div class="pv pv-worker">
+        <label class="lbl" for="kWurl"><%= t('set.workerUrl') %></label>
+        <div class="field"><input id="kWurl" class="ltr" value="<%= cfg.workerUrl %>" placeholder="https://….workers.dev/"></div>
+        <label class="lbl" for="kWkey"><%= t('set.workerKey') %>
+          <% if (cfg.workerKeySet) { %><span class="rolechip pro"><%= t('set.keySet') %></span><% } %>
+        </label>
+        <div class="row gap8">
+          <div class="field" style="flex:1"><input id="kWkey" class="ltr" type="password" placeholder="<%= cfg.workerKey || t('set.keyPh') %>" autocomplete="off"></div>
+          <% if (cfg.workerKeySet) { %><button class="btn btn-sm btn-quiet js-clear" data-key="workerKey"><%- icon('trash',14) %></button><% } %>
+        </div>
+        <p class="muted fs115" style="margin-top:6px"><%= t('set.workerHint') %></p>
+      </div>
+
+      <!-- pollinations -->
+      <div class="pv pv-pollinations">
+        <label class="lbl" for="kPoll"><%= t('set.apiKey') %> — Pollinations
+          <% if (cfg.pollinationsTokenSet) { %><span class="rolechip pro"><%= t('set.keySet') %></span><% } %>
+        </label>
+        <div class="row gap8">
+          <div class="field" style="flex:1"><input id="kPoll" class="ltr" type="password" placeholder="<%= cfg.pollinationsToken || t('set.keyPh') %>" autocomplete="off"></div>
+          <% if (cfg.pollinationsTokenSet) { %><button class="btn btn-sm btn-quiet js-clear" data-key="pollinationsToken"><%- icon('trash',14) %></button><% } %>
+        </div>
+        <a class="ltr" href="https://auth.pollinations.ai" target="_blank" rel="noopener" style="font-size:12px;color:var(--primary-hi)"><%= t('set.getKey') %> ↗ auth.pollinations.ai</a>
+      </div>
+
+      <!-- cloudflare -->
+      <div class="pv pv-cloudflare">
+        <label class="lbl" for="kCfAcc"><%= t('set.account') %> — Cloudflare</label>
+        <div class="field"><input id="kCfAcc" class="ltr" value="<%= cfg.cfAccount %>" autocomplete="off"></div>
+        <label class="lbl" for="kCfTok"><%= t('set.apiKey') %>
+          <% if (cfg.cfTokenSet) { %><span class="rolechip pro"><%= t('set.keySet') %></span><% } %>
+        </label>
+        <div class="row gap8">
+          <div class="field" style="flex:1"><input id="kCfTok" class="ltr" type="password" placeholder="<%= cfg.cfToken || t('set.keyPh') %>" autocomplete="off"></div>
+          <% if (cfg.cfTokenSet) { %><button class="btn btn-sm btn-quiet js-clear" data-key="cfToken"><%- icon('trash',14) %></button><% } %>
+        </div>
+        <a class="ltr" href="https://dash.cloudflare.com" target="_blank" rel="noopener" style="font-size:12px;color:var(--primary-hi)"><%= t('set.getKey') %> ↗ dash.cloudflare.com</a>
+      </div>
+
+      <!-- huggingface -->
+      <div class="pv pv-huggingface">
+        <label class="lbl" for="kHf"><%= t('set.apiKey') %> — Hugging Face
+          <% if (cfg.hfTokenSet) { %><span class="rolechip pro"><%= t('set.keySet') %></span><% } %>
+        </label>
+        <div class="row gap8">
+          <div class="field" style="flex:1"><input id="kHf" class="ltr" type="password" placeholder="<%= cfg.hfToken || t('set.keyPh') %>" autocomplete="off"></div>
+          <% if (cfg.hfTokenSet) { %><button class="btn btn-sm btn-quiet js-clear" data-key="hfToken"><%- icon('trash',14) %></button><% } %>
+        </div>
+        <a class="ltr" href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener" style="font-size:12px;color:var(--primary-hi)"><%= t('set.getKey') %> ↗ huggingface.co</a>
+      </div>
+
+      <!-- any openai-compatible endpoint -->
+      <div class="pv pv-openai">
+        <label class="lbl" for="kBase"><%= t('set.baseUrl') %></label>
+        <div class="field"><input id="kBase" class="ltr" value="<%= cfg.openaiBase %>" placeholder="https://api.openai.com/v1"></div>
+        <label class="lbl" for="kOaiModel"><%= t('set.model') %></label>
+        <div class="field"><input id="kOaiModel" class="ltr" value="<%= cfg.openaiModel %>" placeholder="dall-e-3"></div>
+        <label class="lbl" for="kOai"><%= t('set.apiKey') %>
+          <% if (cfg.openaiKeySet) { %><span class="rolechip pro"><%= t('set.keySet') %></span><% } %>
+        </label>
+        <div class="row gap8">
+          <div class="field" style="flex:1"><input id="kOai" class="ltr" type="password" placeholder="<%= cfg.openaiKey || t('set.keyPh') %>" autocomplete="off"></div>
+          <% if (cfg.openaiKeySet) { %><button class="btn btn-sm btn-quiet js-clear" data-key="openaiKey"><%- icon('trash',14) %></button><% } %>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+      <h4 class="cardsub"><%- icon('globe',15) %> <%= t('set.trTitle') %></h4>
+      <label class="lbl" for="kLlmBase"><%= t('set.llmBase') %></label>
+      <div class="field"><input id="kLlmBase" class="ltr" value="<%= cfg.llmBase %>" placeholder="https://codecraftapi.com/v1"></div>
+      <label class="lbl" for="kLlmModel"><%= t('set.llmModel') %></label>
+      <div class="field"><input id="kLlmModel" class="ltr" value="<%= cfg.llmModel %>" list="llmModels" placeholder="gemini-3.7-flash"></div>
+      <datalist id="llmModels">
+        <% ['gemini-3.7-flash','gemini-3.6-flash','claude-sonnet-5','gpt-5.6-luna','gpt-5.5','grok-4.6','deepseek-v4-flash-0731'].forEach(m => { %>
+          <option value="<%= m %>"></option>
+        <% }) %>
+      </datalist>
+      <label class="lbl" for="kLlm"><%= t('set.llmKey') %>
+        <% if (cfg.llmKeySet) { %><span class="rolechip pro"><%= t('set.keySet') %></span><% } %>
+      </label>
+      <div class="row gap8">
+        <div class="field" style="flex:1"><input id="kLlm" class="ltr" type="password" placeholder="<%= cfg.llmKey || 'cc_…' %>" autocomplete="off"></div>
+        <% if (cfg.llmKeySet) { %><button class="btn btn-sm btn-quiet js-clear" data-key="llmKey"><%- icon('trash',14) %></button><% } %>
+      </div>
+      <p class="muted fs115" style="margin:6px 0 2px"><%= t('set.llmHint') %></p>
+
+      <label class="check" style="margin-top:16px">
+        <input type="checkbox" id="cTranslate" <%= cfg.translate ? 'checked' : '' %>> <%= t('set.translate') %>
+      </label>
+
+      <label class="lbl" for="cTimeout"><%= t('set.timeout') %></label>
+      <div class="field"><input id="cTimeout" class="ltr" type="number" value="<%= cfg.timeout %>" min="5000" step="1000"></div>
+
+      <div class="row gap8" style="margin-top:18px">
+        <button class="btn btn-primary" id="cSave"><%= t('set.save') %></button>
+        <button class="btn btn-ghost" id="cTest"><%- icon('bolt',15) %> <%= t('set.test') %></button>
+        <span class="sp"></span>
+        <button class="btn btn-quiet btn-sm" id="cReset"><%= t('set.reset') %></button>
+      </div>
+      <div id="cResult" class="gen-meta"></div>
+    </div>
+
+    <div class="card pad grantbox">
+      <h3 style="font-size:15px;margin-bottom:4px"><%- icon('coin') %> <%= t('set.economy') %></h3>
+      <label class="lbl" for="cCoinValue"><%= t('set.coinValue') %></label>
+      <div class="field"><input id="cCoinValue" class="ltr" type="number" value="<%= cfg.coinValue %>" min="1"></div>
+      <label class="lbl" for="cCreditCost"><%= t('set.creditCost') %></label>
+      <div class="field"><input id="cCreditCost" class="ltr" type="number" value="<%= cfg.aiCreditCost %>" min="0"></div>
+      <label class="lbl" for="cCoinCost"><%= t('set.coinCost') %></label>
+      <div class="field"><input id="cCoinCost" class="ltr" type="number" value="<%= cfg.aiCoinCost %>" min="0"></div>
+      <label class="lbl" for="cSignupCoins"><%= t('set.signupCoins') %></label>
+      <div class="field"><input id="cSignupCoins" class="ltr" type="number" value="<%= cfg.signupCoins %>" min="0"></div>
+      <label class="lbl" for="cSignupCredits"><%= t('set.signupCredits') %></label>
+      <div class="field"><input id="cSignupCredits" class="ltr" type="number" value="<%= cfg.signupCredits %>" min="0"></div>
+
+      <h3 style="font-size:15px;margin:22px 0 4px"><%- icon('shield') %> <%= t('set.limits') %></h3>
+      <label class="lbl" for="cRateMax"><%= t('set.rateMax') %></label>
+      <div class="field"><input id="cRateMax" class="ltr" type="number" value="<%= cfg.aiRateMax %>" min="1"></div>
+      <label class="lbl" for="cRateWindow"><%= t('set.rateWindow') %></label>
+      <div class="field"><input id="cRateWindow" class="ltr" type="number" value="<%= cfg.aiRateWindow %>" min="1000" step="1000"></div>
+      <label class="lbl" for="cPerRequest"><%= t('set.perRequest') %></label>
+      <div class="field"><input id="cPerRequest" class="ltr" type="number" value="<%= cfg.maxPerRequest %>" min="1" max="4"></div>
+    </div>
+  </div>
+
+<% } else { %>
+  <div class="adm-grid">
+    <div class="card pad">
+      <h3 style="font-size:15px;margin-bottom:14px"><%= t('ann.title') %></h3>
+      <% if (!anns.length) { %>
+        <p class="muted" style="padding:26px 0;text-align:center"><%= t('ann.none') %></p>
+      <% } %>
+      <div class="list">
+        <% anns.forEach(a => { %>
+          <div class="lrow" data-aid="<%= a.id %>">
+            <span class="ann-ic"><%- icon(a.level==='warn'?'alert':a.level==='success'?'check':'megaphone') %></span>
+            <div style="flex:1;min-width:0">
+              <b><%= a.title %></b>
+              <p class="muted" style="font-size:12.5px;margin-top:3px"><%= a.body %></p>
+            </div>
+            <span class="rolechip <%= a.active ? 'pro' : '' %>"><%= a.active ? t('ann.active') : t('ann.hidden') %></span>
+            <button class="btn btn-sm btn-quiet js-ann-toggle" data-aid="<%= a.id %>"><%= a.active ? t('ann.hidden') : t('ann.active') %></button>
+            <button class="iconbtn js-ann-del" data-aid="<%= a.id %>" aria-label="<%= t('ann.dismiss') %>"><%- icon('trash') %></button>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <div class="card pad grantbox">
+      <h3 style="font-size:15px;margin-bottom:4px"><%= t('ann.new') %></h3>
+      <p class="muted" style="font-size:12px"><%= t('ann.publish') %></p>
+      <label class="lbl" for="anT"><%= t('ann.subject') %></label>
+      <div class="field"><input id="anT" maxlength="80"></div>
+      <label class="lbl" for="anB"><%= t('ann.body') %></label>
+      <div class="field" style="height:auto;padding:9px 12px"><textarea id="anB" rows="3" maxlength="240" style="width:100%;background:none;border:0;color:inherit;font:inherit;resize:vertical"></textarea></div>
+      <label class="lbl" for="anL"><%= t('ann.level') %></label>
+      <select class="bare" id="anL" style="width:100%">
+        <option value="info"><%= t('ann.info') %></option>
+        <option value="warn"><%= t('ann.warn') %></option>
+        <option value="success"><%= t('ann.success') %></option>
+      </select>
+      <button class="btn btn-primary btn-block" id="anPost" style="margin-top:16px"><%- icon('megaphone') %> <%= t('ann.publish') %></button>
+    </div>
+  </div>
+<% } %>
+
+<!-- full account editor -->
+<div id="uModal" class="modal hide" role="dialog" aria-modal="true" aria-labelledby="uModalTitle">
+  <div class="modal-box card pad">
+    <div class="between" style="margin-bottom:6px">
+      <h3 id="uModalTitle" style="font-size:16px"><%= t('adm.editUser') %> <b class="grad ltr" id="uWho"></b></h3>
+      <button class="iconbtn" id="uClose" aria-label="<%= t('adm.close') %>"><%- icon('x') %></button>
+    </div>
+    <label class="lbl" for="eUn"><%= t('auth.username') %></label>
+    <div class="field"><input id="eUn" class="ltr" autocomplete="off"></div>
+    <label class="lbl" for="eEm"><%= t('auth.email') %></label>
+    <div class="field"><input id="eEm" class="ltr" type="email" autocomplete="off"></div>
+    <label class="lbl" for="eNm"><%= t('adm.user') %></label>
+    <div class="field"><input id="eNm" autocomplete="off"></div>
+    <label class="lbl" for="ePw"><%= t('adm.newPassword') %> <span class="muted">— <%= t('adm.leaveBlank') %></span></label>
+    <div class="field"><input id="ePw" class="ltr" type="password" autocomplete="new-password"></div>
+    <div class="row gap8">
+      <div style="flex:1">
+        <label class="lbl" for="eCoins"><%= t('coins.name') %></label>
+        <div class="field"><input id="eCoins" class="ltr" type="number" min="0"></div>
+      </div>
+      <div style="flex:1">
+        <label class="lbl" for="eCredits"><%= t('adm.credits') %></label>
+        <div class="field"><input id="eCredits" class="ltr" type="number" min="0"></div>
+      </div>
+    </div>
+    <label class="lbl" for="eRole"><%= t('adm.role') %></label>
+    <select class="bare" id="eRole" style="width:100%">
+      <option value="user"><%= t('adm.member') %></option>
+      <option value="admin"><%= t('adm.admin') %></option>
+    </select>
+    <label class="check" style="margin-top:14px"><input type="checkbox" id="eBanned"> <%= t('adm.banned') %></label>
+    <div class="row gap8" style="margin-top:20px">
+      <button class="btn btn-primary" id="eSave"><%= t('adm.saveUser') %></button>
+      <span class="sp"></span>
+      <button class="btn btn-quiet" id="eDelete" style="color:#FCA5A5"><%- icon('trash',14) %> <%= t('adm.delete') %></button>
+    </div>
+  </div>
+</div>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail', { scripts: ['/js/admin.js'] }) %>

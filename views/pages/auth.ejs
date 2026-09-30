@@ -1,0 +1,103 @@
+<%- include('../partials/head') %>
+
+<div class="auth">
+  <div class="auth-art">
+    <div style="position:relative;z-index:1">
+      <a href="/" class="logo" style="font-size:25px;margin-bottom:26px"><%- brandMark(40) %><%- brandWord(26) %></a>
+      <h1 style="font-size:clamp(27px,3.4vw,40px);margin-bottom:15px"><%= t('au.create') %><br><%= t('au.customize') %><br><span class="grad"><%= t('au.share') %></span></h1>
+      <p class="t2" style="max-width:350px"><%= t('au.lede') %></p>
+
+      <div style="display:flex;flex-direction:column;gap:13px;margin-top:32px;max-width:340px">
+        <% [['grid','au.p1'],['bot','au.p2'],['store','au.p3']].forEach(([i,k]) => { %>
+          <div class="row gap12" style="font-size:13.5px;color:var(--text-2)">
+            <span class="ic" style="width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:rgba(109,74,255,.2);color:var(--primary-hi);flex:none"><%- icon(i) %></span>
+            <%= t(k) %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form">
+    <div class="auth-box">
+      <div class="seg">
+        <a href="/login" class="<%= mode==='login'?'on':'' %>"><%= t('au.login') %></a>
+        <a href="/login?mode=signup" class="<%= mode==='signup'?'on':'' %>"><%= t('au.signup') %></a>
+      </div>
+
+      <h2 style="font-size:21px;margin-bottom:6px"><%= mode==='login' ? t('au.welcome') : t('au.createAcc') %></h2>
+      <p class="muted" style="font-size:13.5px;margin-bottom:24px"><%= mode==='login' ? t('au.welcomeB') : t('au.createAccB') %></p>
+
+      <% if (error) { %>
+        <div class="autherr" role="alert">
+          <%- icon('alert') %> <span><%= t('auth.err.' + error) || t('auth.err.bad') %></span>
+        </div>
+      <% } %>
+
+      <form id="authForm" method="POST" action="<%= mode==='login' ? '/login' : '/signup' %>">
+        <input type="hidden" name="next" value="<%= next %>">
+        <% if (mode==='signup') { %>
+          <label class="lbl" for="au"><%= t('au.username') %></label>
+          <div class="field field-sq field-lg" style="margin-bottom:15px"><%- icon('user') %><input id="au" name="username" value="<%= prefill %>" placeholder="<%= t('au.usernamePh') %>" required minlength="3" autocomplete="username"></div>
+
+          <label class="lbl" for="ae"><%= t('au.email') %></label>
+          <div class="field field-sq field-lg" style="margin-bottom:15px">
+            <%- icon('mail') %><input id="ae" name="email" type="email" placeholder="<%= t('au.emailPh') %>" required autocomplete="email">
+          </div>
+        <% } else { %>
+          <label class="lbl" for="ae"><%= t('auth.loginId') %></label>
+          <div class="field field-sq field-lg" style="margin-bottom:15px">
+            <%- icon('mail') %><input id="ae" name="login" value="<%= prefill %>" type="text" placeholder="admin" required autocomplete="username">
+          </div>
+        <% } %>
+
+        <label class="lbl" for="ap"><%= t('au.password') %></label>
+        <div class="field field-sq field-lg" style="margin-bottom:15px">
+          <%- icon('lock') %>
+          <input id="ap" name="password" type="password" placeholder="<%= t('au.passwordPh') %>" required minlength="8" autocomplete="<%= mode==='login'?'current-password':'new-password' %>">
+          <button type="button" class="iconbtn" id="pwToggle" style="width:28px;height:28px;border:0;background:none" aria-label="<%= t('au.showPw') %>"><%- icon('eye') %></button>
+        </div>
+
+        <div class="between" style="margin-bottom:20px">
+          <label class="check"><input type="checkbox" checked> <%= t('au.remember') %></label>
+          <% if (mode==='login') { %><a href="/help" style="font-size:12.5px;color:var(--primary-hi)"><%= t('au.forgot') %></a><% } %>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg"><%= mode==='login' ? t('au.login') : t('au.createAcc') %></button>
+      </form>
+
+      <% if (mode==='login') { %>
+        <p class="muted ltr" style="text-align:center;font-size:12.5px;margin-top:14px;opacity:.75"><%= t('auth.demo') %></p>
+      <% } %>
+
+      <div class="divider"><%= t('au.or') %></div>
+      <div class="row gap12">
+        <button class="btn btn-ghost btn-block">Google</button>
+        <button class="btn btn-ghost btn-block">Discord</button>
+      </div>
+
+      <p class="muted" style="text-align:center;font-size:13px;margin-top:22px">
+        <% if (mode==='login') { %>
+          <%= t('au.noAcc') %> <a href="/login?mode=signup" style="color:var(--primary-hi);font-weight:600"><%= t('au.signup') %></a>
+        <% } else { %>
+          <%= t('au.hasAcc') %> <a href="/login" style="color:var(--primary-hi);font-weight:600"><%= t('au.login') %></a>
+        <% } %>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('pwToggle')?.addEventListener('click', () => {
+  const p = document.getElementById('ap');
+  p.type = p.type === 'password' ? 'text' : 'password';
+});
+/* real POST — just guard against double submits */
+document.getElementById('authForm')?.addEventListener('submit', (e) => {
+  const b = e.currentTarget.querySelector('button[type=submit]');
+  if (b.dataset.busy) { e.preventDefault(); return; }
+  b.dataset.busy = '1';
+  b.style.opacity = '.7';
+});
+</script>
+<%- include('../partials/tail') %>

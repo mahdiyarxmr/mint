@@ -1,0 +1,108 @@
+<%- include('../partials/head') %>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge badge-pro" style="height:26px;padding:0 13px;margin-bottom:18px"><%- icon('spark') %> &nbsp;<%= t('home.badge') %></span>
+      <h1><%= t('home.title1') %> <span class="grad"><%= t('home.title2') %></span><br><%= t('home.title3') %></h1>
+      <p class="lede"><%= t('home.lede') %></p>
+      <div class="row gap12" style="flex-wrap:wrap">
+        <a href="/editor" class="btn btn-primary btn-lg"><%- icon('spark') %> <%= t('home.start') %></a>
+        <a href="/templates" class="btn btn-ghost btn-lg"><%= t('home.explore') %></a>
+      </div>
+
+      <div class="feats">
+        <% [['bot','home.f1a','home.f1b'],['download','home.f2a','home.f2b'],
+            ['grid','home.f3a','home.f3b'],['trophy','home.f4a','home.f4b']].forEach(([i,a,b]) => { %>
+          <div class="feat"><span class="ic"><%- icon(i) %></span><div><b><%= t(a) %></b><small><%= t(b) %></small></div></div>
+        <% }) %>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <img src="/img/hero-devices.webp" alt="<%= t('home.lede') %>" width="1500" height="1000">
+      <a href="/ai-studio" class="float-cta"><%- icon('spark') %> <%= lang==='fa' ? 'ساخت با هوش مصنوعی' : 'Create with AI' %></a>
+    </div>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="wrap">
+    <div class="sect-head">
+      <h2><%= t('home.popular') %></h2>
+      <a href="/templates" class="link-more"><%= t('home.viewAll') %> <%- icon('arrow') %></a>
+    </div>
+    <div class="grid g5">
+      <% templates.forEach(t2 => { %><%- include('../components/tcard', { t2 }) %><% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="wrap">
+    <div class="ai-hero">
+      <div style="position:relative;z-index:1">
+        <h2 style="font-size:clamp(23px,3vw,34px);margin-bottom:13px"><%= t('home.aiTitle1') %><br><span class="grad"><%= t('home.aiTitle2') %></span></h2>
+        <p class="t2" style="max-width:430px;margin-bottom:22px;font-size:14.5px"><%= t('home.aiLede') %></p>
+        <form action="/ai-studio" method="get" class="prompt" style="max-width:470px">
+          <textarea name="q" placeholder="<%= t('home.promptPh') %>" rows="2"></textarea>
+          <button class="btn btn-primary" style="width:40px;padding:0;border-radius:50%" aria-label="<%= t('ai.results') %>"><%- icon('arrow') %></button>
+        </form>
+        <div class="chips" style="margin-top:18px">
+          <% db.aiStyles.forEach(s => { %>
+            <a href="/ai-studio?style=<%= encodeURIComponent(s) %>" class="chip"><%- icon('spark') %> <%= lang==='fa' ? ({'Gaming setup':'میز گیمینگ','Anime style':'سبک انیمه','Minimalist':'مینیمال','Abstract':'انتزاعی','Fantasy':'فانتزی','Cyberpunk':'سایبرپانک'})[s] : s %></a>
+          <% }) %>
+        </div>
+      </div>
+      <div class="bot" style="position:relative;z-index:1">
+        <img src="/img/ai-bot.webp" alt="Mint AI" style="border-radius:var(--r-xl)">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="wrap">
+    <div class="sect-head">
+      <h2><%= t('home.fromMarket') %></h2>
+      <a href="/marketplace" class="link-more"><%= t('home.browseAll') %> <%- icon('arrow') %></a>
+    </div>
+    <div class="grid g4">
+      <% db.products.slice(0,4).forEach(p => { %><%- include('../components/pcard', { p }) %><% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:30px">
+      <h2><%= t('home.pricingTitle') %></h2>
+      <p class="muted" style="margin-top:8px"><%= t('home.pricingLede') %></p>
+    </div>
+    <div class="grid g3 plans">
+      <% plans.forEach(pl => { %>
+        <div class="plan rv <%= pl.featured ? 'hot':'' %>">
+          <% if (pl.featured) { %><span class="ribbon"><%= t('pr.mostPopular') %></span><% } %>
+          <div class="cap"><%= L(pl,'name') %></div>
+          <div class="row" style="align-items:baseline;gap:6px;margin:10px 0 4px">
+            <span class="amt"><%= pl.price === 0 ? t('pr.free') : money(pl.price) %></span>
+            <% if (pl.price) { %><span class="muted">/ <%= t('pr.month') %></span><% } %>
+          </div>
+          <p class="muted" style="font-size:13px"><%= L(pl,'tagline') %></p>
+          <ul>
+            <% pl.features.slice(0,5).forEach(f => { %>
+              <li class="<%= f.ok ? '':'no' %>">
+                <span style="color:<%= f.ok ? 'var(--ok)':'var(--muted-2)' %>"><%- icon(f.ok ? 'check':'x') %></span>
+                <%= L(f,'label') %>
+              </li>
+            <% }) %>
+          </ul>
+          <a href="/pricing" class="btn <%= pl.featured ? 'btn-primary':'btn-ghost' %> btn-block"><%= L(pl,'cta') %></a>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+<div class="wrap" style="padding-top:34px;padding-bottom:56px">
+  <div style="text-align:center;max-width:640px;margin:0 auto 34px">
+    <h1><%= t('pr.title') %></h1>
+    <p class="muted" style="margin-top:11px"><%= t('pr.lede') %></p>
+  </div>
+
+  <div class="grid g3 plans">
+    <% plans.forEach(pl => { %>
+      <div class="plan rv <%= pl.featured?'hot':'' %>">
+        <% if (pl.featured) { %><span class="ribbon"><%= t('pr.mostPopular') %></span><% } %>
+        <div class="cap"><%= L(pl,'name') %></div>
+        <div class="row" style="align-items:baseline;gap:6px;margin:10px 0 4px">
+          <span class="amt"><%= pl.price===0 ? t('pr.free') : money(pl.price) %></span>
+          <% if (pl.price) { %><span class="muted">/ <%= t('pr.month') %></span><% } %>
+        </div>
+        <p class="muted" style="font-size:13px"><%= L(pl,'tagline') %></p>
+        <ul>
+          <% pl.features.forEach(f => { %>
+            <li class="<%= f.ok?'':'no' %>">
+              <span style="color:<%= f.ok?'var(--ok)':'var(--muted-2)' %>"><%- icon(f.ok?'check':'x') %></span><%= L(f,'label') %>
+            </li>
+          <% }) %>
+        </ul>
+        <button class="btn <%= pl.featured?'btn-primary':'btn-ghost' %> btn-block js-toast" data-msg="<%= L(pl,'cta') %> — <%= t('pr.checkout') %>"><%= L(pl,'cta') %></button>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="card pad-lg" style="margin-top:34px">
+    <h3 style="margin-bottom:16px"><%= t('pr.billing') %></h3>
+    <div class="grid g2" style="gap:18px">
+      <% (lang==='fa' ? [
+          ['لغو با دو کلیک','تنظیمات ← صورت‌حساب ← لغو. تا پایان دوره‌ای که پرداخت کرده‌اید امکانات پولی باقی می‌ماند.'],
+          ['اعتبار وسط دوره از بین نمی‌رود','اعتبار استفاده‌نشده تا پایان دوره باقی می‌ماند و ساخت‌های ناموفق خودکار برگردانده می‌شوند.'],
+          ['طرح‌هایتان مال خودتان است','کاهش پلن هیچ‌وقت کارتان را حذف نمی‌کند. پروژه‌های مازاد فقط تا آزادسازی فضا فقط‌خواندنی می‌شوند.'],
+          ['مجوزهای شفاف','مجوز هر قالب و فایل بازارچه پیش از استفاده نمایش داده می‌شود، نه بعد از آن.']
+        ] : [
+          ['Cancel in two clicks','Settings → Billing → Cancel. You keep paid features until the end of the period you already paid for.'],
+          ['Credits never vanish mid-cycle','Unused AI credits last the whole billing period. Failed generations are always refunded automatically.'],
+          ['Your designs stay yours','Downgrading never deletes your work. Projects above the free limit become read-only until you free up space.'],
+          ['Clear licences','Every template and marketplace asset shows its licence before you use it, not after.']
+        ]).forEach(([h,b]) => { %>
+        <div class="row gap12" style="align-items:flex-start">
+          <span style="color:var(--ok);flex:none;margin-top:2px"><%- icon('shield') %></span>
+          <div><b style="font-size:13.5px;display:block;margin-bottom:4px"><%= h %></b><p class="muted" style="font-size:13px"><%= b %></p></div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

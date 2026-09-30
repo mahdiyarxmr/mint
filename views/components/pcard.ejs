@@ -1,0 +1,26 @@
+<% const bcls = { 'PSD':'badge-psd', 'PREMIUM':'badge-premium', 'PACK':'badge-pack' }[p.badge] || 'badge-pro'; %>
+<article class="tcard pcard rv" data-id="<%= p.id %>">
+  <div class="thumb">
+    <img src="/img/<%= p.img %>.webp" alt="<%= L(p,'title') %>" loading="lazy">
+    <div class="tags"><span class="badge <%= bcls %>"><%= p.badge %></span></div>
+    <div class="hover">
+      <button class="btn btn-primary btn-sm js-buy" data-id="<%= p.id %>" data-title="<%= L(p,'title') %>"
+              data-price="<%= money(p.price) %>" data-coins="<%= coinsFor(p.price) %>"><%- icon('cart') %> <%= t('mkt.buy') %></button>
+      <button class="btn btn-ghost btn-sm js-like" data-n="<%= p.sales %>"><%- icon('heart') %></button>
+    </div>
+  </div>
+  <div class="meta" style="align-items:flex-start">
+    <div style="min-width:0">
+      <h4 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><%= L(p,'title') %></h4>
+      <small><%= L(p,'kind') %></small>
+      <div class="row gap8" style="margin-top:4px">
+        <span class="stars">★★★★★</span>
+        <span class="seller"><%= num(p.rating) %> · <%= num(p.sales) %> <%= t('mkt.sales') %></span>
+      </div>
+    </div>
+    <div style="text-align:<%= rtl?'left':'right' %>;flex:none">
+      <span class="price"><%= money(p.price) %></span>
+      <% if (p.price) { %><div class="muted ltr fs105" style="margin-top:2px"><%= num(coinsFor(p.price)) %> <%= t('coins.name') %></div><% } %>
+    </div>
+  </div>
+</article>

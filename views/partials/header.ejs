@@ -1,0 +1,95 @@
+<% const nav = [
+  ['/', t('nav.home')], ['/templates', t('nav.templates')], ['/marketplace', t('nav.marketplace')],
+  ['/ai-studio', t('nav.ai')], ['/explore', t('nav.explore')]
+]; %>
+<header class="nav">
+  <div class="nav-in">
+    <a href="/" class="logo"><%- brandMark(34) %><%- brandWord(22) %></a>
+
+    <nav class="nav-links" aria-label="<%= t('nav.menu') %>">
+      <% nav.forEach(([href,label]) => { %>
+        <a href="<%= href %>" class="<%= path === href ? 'on' : '' %>"><%= label %></a>
+      <% }) %>
+    </nav>
+
+    <span class="sp"></span>
+
+    <div class="row gap8 desk">
+      <div class="searchwrap" style="width:220px">
+        <div class="field" style="height:36px">
+          <%- icon('search') %>
+          <input id="gsearch" type="search" placeholder="<%= t('nav.search') %>" autocomplete="off" aria-label="<%= t('nav.search') %>">
+        </div>
+        <div id="gresults" class="results hide" role="listbox"></div>
+      </div>
+
+      <div class="langseg" role="group" aria-label="<%= t('nav.language') %>">
+        <% ['fa','en'].forEach(code => { %>
+          <a href="<%= langHref(code) %>" class="<%= lang === code ? 'on' : '' %>" hreflang="<%= code %>"
+             rel="alternate" aria-current="<%= lang === code ? 'true' : 'false' %>"
+             title="<%= locales[code].name %>"><%= code === 'fa' ? 'فارسی' : 'EN' %></a>
+        <% }) %>
+      </div>
+
+      <% if (authed) { %>
+        <a href="/ai-studio" class="coinpill" title="<%= t('coins.value') %>">
+          <span class="coin">₥</span><b><%= num(me.coins) %></b>
+        </a>
+        <a href="/notifications" class="iconbtn" aria-label="<%= t('nav.notifications') %>" style="position:relative">
+          <%- icon('bell') %>
+          <span style="position:absolute;top:6px;<%= rtl ? 'left' : 'right' %>:7px;width:7px;height:7px;border-radius:50%;background:#F87171;border:1.5px solid #05081F"></span>
+        </a>
+        <% if (isAdmin) { %>
+          <a href="/admin" class="iconbtn" title="<%= t('adm.manage') %>" style="color:var(--primary-hi)"><%- icon('shield') %></a>
+        <% } %>
+        <a href="/dashboard" class="avatar" title="<%= me.username %>"><%= me.username.slice(0,2).toUpperCase() %></a>
+        <form method="POST" action="/logout" style="display:inline">
+          <button class="iconbtn" type="submit" title="<%= t('auth.logout') %>"><%- icon('logout') %></button>
+        </form>
+      <% } else { %>
+        <a href="/login" class="btn btn-quiet btn-sm"><%= t('auth.login') %></a>
+        <a href="/login?mode=signup" class="btn btn-primary btn-sm"><%= t('auth.signup') %></a>
+      <% } %>
+    </div>
+
+    <button class="iconbtn burger" id="burger" aria-label="<%= t('nav.menu') %>" aria-expanded="false"><%- icon('menu') %></button>
+  </div>
+</header>
+
+<!-- mobile drawer (design/responsive.md) -->
+<div id="drawer" class="hide" style="position:fixed;inset:0;z-index:100;background:rgba(3,5,20,.72);backdrop-filter:blur(6px)">
+  <nav style="position:absolute;top:0;<%= rtl ? 'left' : 'right' %>:0;bottom:0;width:min(300px,84vw);background:#080D2A;border-<%= rtl ? 'right' : 'left' %>:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:5px;overflow-y:auto">
+    <div class="between" style="margin-bottom:14px">
+      <a href="/" class="logo"><%- brandMark(34) %><%- brandWord(22) %></a>
+      <button class="iconbtn" id="dclose" aria-label="<%= t('nav.close') %>"><%- icon('x') %></button>
+    </div>
+    <div class="field" style="margin-bottom:10px"><%- icon('search') %><input type="search" placeholder="<%= t('nav.searchShort') %>" aria-label="<%= t('nav.searchShort') %>"></div>
+    <% [...nav, ['/dashboard', t('db.dashboard')], ['/projects', t('db.myDesigns')], ['/pricing', t('nav.signin') && (lang==='fa'?'قیمت‌گذاری':'Pricing')],
+        ['/achievements', t('db.achievements')], ['/leaderboard', t('db.leaderboard')], ['/purchases', t('db.purchases')],
+        ['/downloads', t('db.downloads')], ['/settings', t('db.settings')], ['/help', t('hp.title')]].forEach(([h,l]) => { %>
+      <a href="<%= h %>" style="padding:11px 13px;border-radius:10px;font-size:14px;<%= path===h?'background:rgba(109,74,255,.22);color:#fff':'color:var(--muted)' %>"><%= l %></a>
+    <% }) %>
+    <div class="row gap8" style="padding:11px 13px;font-size:13px;color:var(--muted)">
+      <%- icon('globe') %> <%= t('nav.language') %>
+    </div>
+    <div class="langseg" style="margin:0 13px">
+      <% ['fa','en'].forEach(code => { %>
+        <a href="<%= langHref(code) %>" class="<%= lang === code ? 'on' : '' %>" hreflang="<%= code %>"
+           style="flex:1;text-align:center"><%= code === 'fa' ? 'فارسی' : 'English' %></a>
+      <% }) %>
+    </div>
+    <% if (authed) { %>
+      <div class="row between" style="margin:12px 13px 0;padding:10px 12px;border-radius:12px;background:rgba(109,74,255,.14)">
+        <span style="font-size:13px"><%= t('coins.balance') %></span>
+        <b class="grad" style="font-size:15px"><%= num(me.coins) %> <%= t('coins.name') %></b>
+      </div>
+    <% } %>
+    <a href="/editor" class="btn btn-primary" style="margin-top:12px"><%- icon('plus') %> <%= t('nav.createNew') %></a>
+    <% if (authed) { %>
+      <% if (isAdmin) { %><a href="/admin" class="btn btn-ghost" style="margin-top:8px"><%- icon('shield') %> <%= t('adm.manage') %></a><% } %>
+      <form method="POST" action="/logout" style="margin-top:8px"><button class="btn btn-quiet btn-block" type="submit"><%- icon('logout') %> <%= t('auth.logout') %></button></form>
+    <% } else { %>
+      <a href="/login" class="btn btn-ghost" style="margin-top:8px"><%= t('auth.login') %></a>
+    <% } %>
+  </nav>
+</div>

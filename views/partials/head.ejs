@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>" dir="<%= dir %>">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05081F">
+<meta name="description" content="<%= t('home.lede') %>">
+<title><%= title %> · <%= 'Mint' %></title>
+<script>document.documentElement.className="js"</script>
+<link rel="stylesheet" href="/css/mint.css">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/brand/favicon-16.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/img/brand/favicon-48.png">
+<link rel="apple-touch-icon" href="/img/brand/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="application-name" content="Mint">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mint">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mint">
+<meta property="og:title" content="<%= title %> · Mint">
+<meta property="og:description" content="<%= t('home.lede') %>">
+<meta property="og:image" content="/img/brand/og.png">
+<meta property="og:locale" content="<%= lang === 'fa' ? 'fa_IR' : 'en_US' %>">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<div id="app">
+<% if (typeof noChrome === 'undefined' || !noChrome) { %>
+<%- include('header') %>
+<%- include('announce') %>
+<% } %>

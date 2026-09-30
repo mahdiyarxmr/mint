@@ -1,0 +1,16 @@
+<% const items = [
+  ['/dashboard',     t('db.dashboard'),     'chart'],
+  ['/projects',      t('db.myDesigns'),     'layers'],
+  ['/collections',   t('db.collections'),   'folder'],
+  ['/achievements',  t('db.achievements'),  'trophy'],
+  ['/leaderboard',   t('db.leaderboard'),   'star'],
+  ['/downloads',     t('db.downloads'),     'download'],
+  ['/purchases',     t('db.purchases'),     'cart'],
+  ['/notifications', t('db.notifications'), 'bell'],
+  ['/settings',      t('db.settings'),      'gear'],
+]; %>
+<aside class="side" aria-label="<%= t('db.account') %>">
+  <% items.forEach(([h,l,i]) => { %>
+    <a href="<%= h %>" class="<%= path===h ? 'on':'' %>"><%- icon(i) %> <%= l %></a>
+  <% }) %>
+</aside>

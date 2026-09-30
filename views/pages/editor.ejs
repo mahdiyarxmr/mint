@@ -1,0 +1,173 @@
+<%- include('../partials/head') %>
+<% const panelLabel = { base:t('ed.base'), colors:t('ed.colors'), patterns:t('ed.patterns'),
+   stickers:t('ed.stickers'), text:t('ed.text'), effects:t('ed.effects'), ai:t('ed.ai') }; %>
+
+<div class="ed">
+  <!-- LEFT: panel switcher -->
+  <section class="ed-col left" id="edLeft">
+    <div class="ed-h">
+      <%= t('ed.editor') %>
+      <button class="iconbtn js-drawer-close hide" style="width:28px;height:28px"><%- icon('x') %></button>
+    </div>
+    <div class="ed-body">
+      <% panels.forEach((pn,i) => { %>
+        <div class="ed-tab <%= i===0?'on':'' %>" data-panel="<%= pn.id %>" data-label="<%= panelLabel[pn.id] %>" role="button" tabindex="0">
+          <%- icon(pn.icon) %> <span style="flex:1"><%= panelLabel[pn.id] %></span>
+          <% if (pn.badge) { %><span class="badge badge-new"><%= t('ed.new') %></span><% } %>
+        </div>
+      <% }) %>
+
+      <div class="cap" style="margin:18px 0 9px"><%= t('ed.tools') %></div>
+      <div class="ed-swatches">
+        <% tools.forEach((tl,i) => { %>
+          <button class="iconbtn js-tool <%= i===0?'on':'' %>" data-tool="<%= tl.id %>" title="<%= tl.label %> (<%= tl.key %>)"
+                  style="width:100%;border-radius:9px;<%= i===0?'background:rgba(109,74,255,.28);color:#fff':'' %>">
+            <%- icon({select:'move',pan:'move',text:'type',image:'image',shape:'square',line:'line',crop:'crop'}[tl.id]) %>
+          </button>
+        <% }) %>
+      </div>
+
+      <div class="cap" style="margin:18px 0 9px"><%= t('ed.history') %></div>
+      <div class="row gap8">
+        <button class="btn btn-ghost btn-sm" id="undo" style="flex:1"><%- icon('undo') %> <%= t('ed.undo') %></button>
+        <button class="btn btn-ghost btn-sm" id="redo" style="flex:1"><%- icon('redo') %> <%= t('ed.redo') %></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CENTER: canvas -->
+  <section class="ed-col">
+    <div class="ed-h">
+      <span class="row gap8"><%- icon('layers') %> <%= t('ed.untitled') %>
+        <span class="muted" style="font-size:12px">· <span id="devName"><%= L(device,'name') %></span></span></span>
+      <span class="row gap8">
+        <span class="muted fs115" id="savedAt"><%= t('ed.saved') %></span>
+        <span class="dot"></span>
+      </span>
+    </div>
+
+    <div class="devpick" id="devPick">
+      <% devices.forEach(d => { %>
+        <button class="dchip <%= d.id === device.id ? 'on' : '' %>" data-device="<%= d.id %>"
+                title="<%= L(d,'name') %>"><%- icon(d.icon, 15) %> <span><%= L(d,'name') %></span></button>
+      <% }) %>
+    </div>
+
+    <div class="canvas-area" id="canvasArea">
+      <div class="stage" id="stage">
+        <% devices.forEach(d => { %>
+          <svg class="devsvg <%= d.id === device.id ? 'on' : '' %>" data-device="<%= d.id %>"
+               viewBox="0 0 <%= d.w %> <%= d.h %>" preserveAspectRatio="xMidYMid meet"
+               xmlns="http://www.w3.org/2000/svg" role="img" aria-label="<%= L(d,'name') %>">
+            <defs>
+              <clipPath id="clip-<%= d.id %>"><path d="<%= d.path %>"/></clipPath>
+              <radialGradient id="vig-<%= d.id %>" cx="50%" cy="45%" r="75%">
+                <stop offset="42%" stop-color="#000" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#000" stop-opacity=".72"/>
+              </radialGradient>
+            </defs>
+
+            <g clip-path="url(#clip-<%= d.id %>)">
+              <rect class="base" width="<%= d.w %>" height="<%= d.h %>" fill="#05081F"/>
+              <image class="art" href="/img/<%= templates[2].img %>.webp" x="0" y="0"
+                     width="<%= d.w %>" height="<%= d.h %>" preserveAspectRatio="xMidYMid slice"/>
+              <rect class="tint" width="<%= d.w %>" height="<%= d.h %>" fill="#6D4AFF" opacity="0"/>
+              <rect class="vig" width="<%= d.w %>" height="<%= d.h %>" fill="url(#vig-<%= d.id %>)" opacity="0"/>
+              <g class="stickers" font-size="<%= Math.round(d.w * 0.08) %>" text-anchor="middle"
+                 dominant-baseline="central" fill="#fff"
+                 style="paint-order:stroke;stroke:rgba(0,0,0,.5);stroke-width:4px;stroke-linejoin:round"></g>
+              <% if (!d.noText) { %>
+                <text class="usertext" x="<%= d.w / 2 %>" y="<%= Math.round(d.h * d.textY) %>"
+                      text-anchor="middle" font-weight="800"
+                      style="paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:5px;stroke-linejoin:round"></text>
+              <% } %>
+            </g>
+
+            <path class="edge" d="<%= d.path %>" fill="none" stroke="rgba(139,107,255,.42)" stroke-width="2.5"/>
+            <g class="chrome" pointer-events="none"><%- d.overlay %></g>
+          </svg>
+        <% }) %>
+      </div>
+
+      <div class="thumbstrip">
+        <% templates.slice(0,4).forEach((t2,i) => { %>
+          <button class="js-variant <%= i===2?'on':'' %>" data-img="/img/<%= t2.img %>.webp" title="<%= L(t2,'title') %>">
+            <img src="/img/<%= t2.img %>.webp" alt="<%= L(t2,'title') %>">
+          </button>
+        <% }) %>
+      </div>
+    </div>
+
+    <div class="viewbar">
+      <% [['Front',t('ed.front')],['Back',t('ed.back')],['Left',t('ed.left')],['Right',t('ed.right')]].forEach(([v,lb],i) => { %>
+        <button class="js-view <%= i===0?'on':'' %>" data-view="<%= v %>"><%= lb %></button>
+      <% }) %>
+      <span style="width:14px"></span>
+      <button id="zoomOut" aria-label="−">−</button>
+      <button id="zoomLabel" style="min-width:56px">100%</button>
+      <button id="zoomIn" aria-label="+">+</button>
+    </div>
+
+    <div class="ed-mobilebar hide">
+      <button class="btn btn-ghost btn-sm js-open-left"><%- icon('pattern') %> <%= t('ed.toolsBtn') %></button>
+      <button class="btn btn-ghost btn-sm js-open-right"><%- icon('palette') %> <%= t('ed.inspectorBtn') %></button>
+    </div>
+  </section>
+
+  <!-- RIGHT: inspector -->
+  <section class="ed-col right" id="edRight">
+    <div class="ed-h">
+      <span id="panelTitle"><%= t('ed.base') %></span>
+      <button class="iconbtn js-drawer-close hide" style="width:28px;height:28px"><%- icon('x') %></button>
+    </div>
+    <div class="ed-body">
+
+      <div class="cap" style="margin-bottom:9px"><%= t('ed.palette') %></div>
+      <div class="swatches" style="margin-bottom:18px">
+        <% palette.forEach((c,i) => { %>
+          <button class="sw js-sw <%= i===3?'on':'' %>" data-c="<%= c %>" style="background:<%= c %>" aria-label="<%= c %>"></button>
+        <% }) %>
+      </div>
+
+      <div class="cap" style="margin-bottom:9px"><%= t('ed.pattern') %></div>
+      <div class="ptn" style="margin-bottom:18px">
+        <% templates.slice(0,10).forEach((t2,i) => { %>
+          <button class="js-ptn <%= i===0?'on':'' %>" data-img="/img/<%= t2.img %>.webp" title="<%= L(t2,'title') %>">
+            <img src="/img/<%= t2.img %>.webp" alt="<%= L(t2,'title') %>">
+          </button>
+        <% }) %>
+      </div>
+
+      <div class="cap" style="margin-bottom:9px"><%= t('ed.stickers') %></div>
+      <div class="stk" style="margin-bottom:18px">
+        <% ['★','♥','⚡','🌙','👾','🔥','💜','🎮','✦','🐉'].forEach(sk => { %>
+          <button class="js-stk" data-s="<%= sk %>"><%= sk %></button>
+        <% }) %>
+      </div>
+
+      <div class="cap" style="margin-bottom:9px"><%= t('ed.text') %></div>
+      <div class="field field-sq" style="margin-bottom:10px">
+        <input id="edText" placeholder="<%= t('ed.textPh') %>" maxlength="22">
+      </div>
+      <div class="row gap8" style="margin-bottom:18px">
+        <input type="color" id="edTextColor" value="#E3D9FF" style="width:38px;height:34px;border:1px solid var(--line);border-radius:9px;background:none;cursor:pointer;padding:2px">
+        <select class="bare" id="edTextSize" style="flex:1;height:34px">
+          <option value="15"><%= t('ed.small') %></option>
+          <option value="19" selected><%= t('ed.medium') %></option>
+          <option value="26"><%= t('ed.large') %></option>
+        </select>
+      </div>
+
+      <div class="cap" style="margin-bottom:9px"><%= t('ed.effects') %></div>
+      <label class="check" style="margin-bottom:9px"><input type="checkbox" id="fxGlow" checked> <%= t('ed.glow') %></label>
+      <label class="check" style="margin-bottom:9px"><input type="checkbox" id="fxGrain"> <%= t('ed.grain') %></label>
+      <label class="check" style="margin-bottom:18px"><input type="checkbox" id="fxVignette"> <%= t('ed.vignette') %></label>
+
+      <button class="btn btn-primary btn-block" id="btnDownload" style="margin-bottom:9px"><%- icon('download') %> <%= t('ed.download') %></button>
+      <button class="btn btn-ghost btn-block" id="btnSave"><%- icon('check') %> <%= t('ed.save') %></button>
+      <p class="muted fs11" style="text-align:center;margin-top:11px"><%= t('ed.exportNote') %> <a href="/pricing" style="color:var(--primary-hi)"><%= t('ed.upgrade4x') %></a></p>
+    </div>
+  </section>
+</div>
+
+<%- include('../partials/tail', { scripts: ['/js/editor.js'] }) %>

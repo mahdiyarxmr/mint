@@ -1,0 +1,36 @@
+<%- include('../partials/head') %>
+<% const faqsFa = [
+  { q:'Mint دقیقاً چیست؟', a:'Mint یک پلتفرم طراحی دیجیتال برای محصولات مرتبط با دستگاه‌هاست — کی‌کپ، کیبورد، قاب موبایل، کاور لپ‌تاپ، کیس کامپیوتر، دسته ایکس‌باکس و پلی‌استیشن، پس‌زمینه و المان‌های استریم. شما طرح می‌سازید و فایل خروجی می‌گیرید؛ Mint در این نسخه خدمات تولید فیزیکی ارائه نمی‌دهد.' },
+  { q:'آیا مالک ساخته‌هایم هستم؟', a:'طرح‌های اصیل شما متعلق به خودتان است. قالب‌ها و فایل‌های بازارچه مجوز مخصوص خود را دارند که پیش از خرید در صفحه محصول نمایش داده می‌شود.' },
+  { q:'اعتبار هوش مصنوعی چطور کار می‌کند؟', a:'هر بار ساخت، مقداری از سهمیه ماهانه شما کم می‌کند. اعتبارها ابتدای هر دوره صورت‌حساب بازنشانی می‌شوند و وسط دوره از بین نمی‌روند. اعتبار ساخت‌های ناموفق همیشه برگردانده می‌شود.' },
+  { q:'می‌توانم در بازارچه بفروشم؟', a:'بله. هر حسابی می‌تواند فایل ارسال کند. ارسال‌ها پیش از انتشار بررسی می‌شوند و تسویه به‌صورت ماهانه انجام می‌گیرد.' },
+  { q:'چه فرمت‌هایی می‌توانم خروجی بگیرم؟', a:'PNG در همه پلن‌ها. پلن حرفه‌ای فرمت‌های JPG، SVG و PDF تا ۴× را اضافه می‌کند. پلن استودیو فرمت‌های PSD و TIFF تا ۸× را هم شامل می‌شود.' },
+  { q:'هر زمان می‌توانم لغو کنم؟', a:'بله. از مسیر تنظیمات ← صورت‌حساب لغو کنید. تا پایان دوره‌ای که پرداخت کرده‌اید امکانات پولی باقی می‌ماند و ما هرگز دکمه لغو را پنهان نمی‌کنیم.' },
+]; const items = lang === 'fa' ? faqsFa : faqs; %>
+
+<div class="wrap" style="padding-top:34px;padding-bottom:56px;max-width:880px">
+  <div style="text-align:center;margin-bottom:30px">
+    <h1><%= t('hp.title') %></h1>
+    <p class="muted" style="margin-top:10px"><%= t('hp.lede') %></p>
+    <div class="field field-lg" style="max-width:430px;margin:22px auto 0"><%- icon('search') %><input placeholder="<%= t('hp.searchPh') %>"></div>
+  </div>
+
+  <div class="list">
+    <% items.forEach((f,i) => { %>
+      <details class="card pad" style="cursor:pointer" <%= i===0?'open':'' %>>
+        <summary style="font-weight:650;font-size:14.5px;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center">
+          <%= f.q %> <span style="color:var(--primary-hi);flex:none"><%- icon('chev') %></span>
+        </summary>
+        <p class="muted" style="font-size:13.5px;margin-top:11px;line-height:1.85"><%= f.a %></p>
+      </details>
+    <% }) %>
+  </div>
+
+  <div class="card pad-lg" style="margin-top:26px;text-align:center">
+    <h3 style="margin-bottom:7px"><%= t('hp.stuck') %></h3>
+    <p class="muted" style="font-size:13.5px;margin-bottom:16px"><%= t('hp.stuckB') %></p>
+    <a href="mailto:hello@mint.design" class="btn btn-primary"><%- icon('mail') %> <%= t('hp.contact') %></a>
+  </div>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

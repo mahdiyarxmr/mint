@@ -1,0 +1,33 @@
+<%- include('../partials/head') %>
+<% const faTxt = {
+  n1:'<b class="ltr">nocturne</b> طرح <b>طلوع ماه</b> شما را پسندید.',
+  n2:'شما <b>۳۰+ امتیاز</b> بابت تکمیل <b>استودیو را امتحان کن</b> گرفتید.',
+  n3:'<b class="ltr">yuki.dsg</b> شما را دنبال کرد.',
+  n4:'فایل <b>PSD کیبورد نئونی</b> شما فروش رفت. <b>۴٫۹۹ دلار+</b>',
+  n5:'<b class="ltr">formfn</b> روی <b>اسکین اژدها</b> دیدگاه گذاشت.',
+  n6:'اعتبار هوش مصنوعی شما برای این دوره به <b>۵۰۰</b> بازنشانی شد.' };
+const faTime = { '12m':'۱۲ دقیقه','1h':'۱ ساعت','3h':'۳ ساعت','1d':'۱ روز','2d':'۲ روز','4d':'۴ روز' }; %>
+<div class="shell">
+  <%- include('../partials/sidebar') %>
+  <main>
+    <div class="phead between" style="flex-wrap:wrap;gap:12px">
+      <div><h1><%= t('nt.title') %></h1><p><%= num(items.filter(i=>i.unread).length) %> <%= t('nt.unread') %></p></div>
+      <button class="btn btn-ghost btn-sm js-toast" data-msg="<%= t('nt.marked') %>"><%- icon('check') %> <%= t('nt.markAll') %></button>
+    </div>
+    <div class="list">
+      <% items.forEach(n => { %>
+        <div class="lrow <%= n.unread?'unread':'' %>">
+          <span class="iconbtn" style="flex:none;background:rgba(109,74,255,.18);color:var(--primary-hi)">
+            <%- icon({like:'heart',xp:'spark',follow:'user',sale:'tag',comment:'msg',system:'info'}[n.type]) %></span>
+          <div style="flex:1;min-width:0">
+            <p style="font-size:13.5px"><%- lang==='fa' ? faTxt[n.id] : n.text %></p>
+            <small class="muted"><%= lang==='fa' ? faTime[n.time] : n.time %> <%= t('ai.ago') %></small>
+          </div>
+          <% if (n.unread) { %><span class="dot" style="background:var(--primary-hi)"></span><% } %>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

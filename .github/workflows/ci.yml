@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    name: Static checks and boot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # There is nothing to install — that is the point of this project.
+      - name: Syntax-check every module
+        run: |
+          for f in server.js lib/*.js data/*.js public/js/*.js public/sw.js tools/worker.js; do
+            node --check "$f"
+          done
+          echo "all modules parse"
+
+      - name: Every view compiles
+        run: |
+          node -e "
+            const fs = require('fs');
+            const { compileSource } = require('./lib/miniejs');
+            let n = 0;
+            for (const d of ['pages', 'partials', 'components']) {
+              for (const f of fs.readdirSync('views/' + d)) {
+                const src = fs.readFileSync('views/' + d + '/' + f, 'utf8');
+                new Function('locals', '__esc', 'include',
+                             'with(locals){' + compileSource(src) + '}');
+                n++;
+              }
+            }
+            console.log('compiled ' + n + ' views');
+          "
+
+      - name: Dictionaries stay key-for-key identical
+        run: |
+          node -e "
+            const { DICT } = require('./data/i18n');
+            const fa = Object.keys(DICT.fa), en = Object.keys(DICT.en);
+            const odd = [...fa.filter(k => !(k in DICT.en)),
+                         ...en.filter(k => !(k in DICT.fa))];
+            if (odd.length) { console.error('unpaired keys:', odd); process.exit(1); }
+            console.log(fa.length + ' keys, fully paired');
+          "
+
+      - name: No dependency ever creeps back in
+        run: |
+          node -e "
+            const p = require('./package.json');
+            const d = Object.keys(p.dependencies || {});
+            const v = Object.keys(p.devDependencies || {});
+            if (d.length || v.length) {
+              console.error('dependencies found:', d, v); process.exit(1);
+            }
+            console.log('zero dependencies confirmed');
+          "
+
+      - name: Server boots and serves
+        run: |
+          node server.js &
+          SERVER=$!
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3000/ >/dev/null && break
+            sleep 1
+          done
+          fail=0
+          for route in / /login /templates /marketplace /pricing /offline /manifest.webmanifest; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:3000$route")
+            echo "$route -> $code"
+            [ "$code" = "200" ] || fail=1
+          done
+          kill $SERVER
+          exit $fail
+
+  browser:
+    name: Browser harnesses
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Playwright
+        run: |
+          pip install --quiet playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Start the server
+        run: |
+          node server.js &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3000/ >/dev/null && break
+            sleep 1
+          done
+
+      - name: Crawl every page in both languages
+        run: python tools/qa.py
+
+      - name: Interaction assertions
+        run: python tools/interact.py
+
+      - name: Mobile audit
+        run: python tools/mobile.py
+
+      - name: Installable-web-app checks
+        run: python tools/pwa.py

@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+<% const lv = db.levelFor(user.xp); %>
+<div class="wrap" style="padding-top:26px;padding-bottom:56px">
+  <div class="card pad-lg" style="margin-bottom:24px;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(520px 200px at 18% 0%,rgba(109,74,255,.28),transparent 68%)"></div>
+    <div class="row gap16" style="position:relative;flex-wrap:wrap">
+      <div class="avatar" style="width:84px;height:84px;font-size:28px">MT</div>
+      <div style="flex:1;min-width:210px">
+        <div class="row gap12" style="flex-wrap:wrap"><h1 style="font-size:25px"><%= L(user,'name') %></h1>
+          <span class="badge badge-pro"><%- icon('spark') %> <%= L(user,'member') %></span></div>
+        <p class="muted" style="font-size:13.5px;margin:4px 0 8px"><span class="ltr"><%= user.handle %></span> · <%= t('db.level') %> <%= num(lv.level) %> <%= L(lv,'name') %> · <%= t('pf.joined') %> <%= L(user,'joined') %></p>
+        <p class="t2" style="font-size:13.5px;max-width:470px"><%= L(user,'bio') %></p>
+      </div>
+      <div class="row gap8">
+        <button class="btn btn-primary js-toast" data-msg="<%= t('pf.following') %>"><%- icon('plus') %> <%= t('pf.follow') %></button>
+        <button class="btn btn-ghost js-toast" data-msg="<%= t('pf.linkCopied') %>"><%- icon('share') %></button>
+      </div>
+    </div>
+    <div class="stats" style="margin-top:22px;position:relative">
+      <div class="stat"><b><%= num(user.designs) %></b><small><%= t('db.designs') %></small></div>
+      <div class="stat"><b><%= num(user.favorites) %></b><small><%= t('db.favorites') %></small></div>
+      <div class="stat"><b><%= num(user.purchases) %></b><small><%= t('db.purchasesN') %></small></div>
+    </div>
+  </div>
+
+  <div class="tabs" style="margin-bottom:20px"><a class="on"><%= t('pf.designs') %></a>
+    <a href="/collections"><%= t('db.collections') %></a><a href="/achievements"><%= t('db.achievements') %></a></div>
+
+  <div class="grid g4" style="margin-bottom:34px">
+    <% designs.forEach(d => { %>
+      <article class="tcard rv">
+        <div class="thumb"><img src="/img/<%= d.img %>.webp" alt="<%= L(d,'title') %>" loading="lazy">
+          <div class="hover"><button class="btn btn-ghost btn-sm js-like" data-n="<%= d.likes %>"><%- icon('heart') %> <span><%= num(d.likes) %></span></button></div></div>
+        <div class="meta"><div><h4><%= L(d,'title') %></h4><small><%= L(d,'edited') %></small></div></div>
+      </article>
+    <% }) %>
+  </div>
+
+  <div class="sect-head"><h2 style="font-size:18px"><%= t('pf.badgesEarned') %></h2>
+    <a href="/achievements" class="link-more"><%= t('pf.allAch') %> <%- icon('arrow') %></a></div>
+  <div class="grid g4">
+    <% achievements.filter(a=>a.earned).forEach(a => { %>
+      <div class="card pad rv" style="text-align:center">
+        <div style="width:46px;height:46px;border-radius:14px;margin:0 auto 10px;display:grid;place-items:center;
+            background:linear-gradient(145deg,#8B6BFF,#5436D6);color:#fff;box-shadow:0 8px 20px -6px rgba(109,74,255,.8)"><%- icon(a.icon, 20) %></div>
+        <b style="font-size:13px"><%= L(a,'name') %></b>
+        <p class="muted fs115" style="margin-top:4px"><%= L(a,'desc') %></p>
+      </div>
+    <% }) %>
+  </div>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

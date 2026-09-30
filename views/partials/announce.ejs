@@ -1,0 +1,11 @@
+<% if (typeof announcements !== 'undefined' && announcements.length) { %>
+  <div class="anns">
+    <% announcements.forEach(a => { %>
+      <div class="ann ann-<%= a.level %>" data-ann="<%= a.id %>" role="status">
+        <span class="ann-ic"><%- icon(a.level === 'warn' ? 'alert' : a.level === 'success' ? 'check' : 'megaphone', 16) %></span>
+        <div class="ann-tx"><b><%= a.title %></b><span><%= a.body %></span></div>
+        <button class="ann-x js-ann-x" aria-label="<%= t('ann.dismiss') %>"><%- icon('x', 14) %></button>
+      </div>
+    <% }) %>
+  </div>
+<% } %>

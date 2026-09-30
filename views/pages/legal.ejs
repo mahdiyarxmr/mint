@@ -1,0 +1,33 @@
+<%- include('../partials/head') %>
+<% const en = {
+  terms:['By using Mint you agree to these terms. Mint provides design tools, templates, AI generation and a marketplace for digital assets. Mint is a digital design platform and does not manufacture physical goods in this release.','You are responsible for the content you upload and publish. Do not upload material you do not have the right to use.','Paid plans renew automatically until cancelled. You may cancel at any time from Settings and retain paid features for the remainder of the period already paid for.'],
+  privacy:['We collect the minimum needed to run Mint: your account details, your projects and assets, and basic usage analytics. We do not sell personal data.','Uploaded files are stored privately. Generated previews are public only when you publish a design. You can export or delete your data at any time from Settings.','Payment processing is handled by our payment provider. Mint never stores full card numbers on its own servers.'],
+  licenses:['Designs you create from a blank canvas are yours. You may use them personally and, on paid plans, commercially.','Templates carry the licence shown on the template. Free templates are for personal use unless stated otherwise.','Marketplace assets carry the licence set by the seller, displayed before purchase. Reselling an asset unchanged is never permitted.'],
+  copyright:['If you believe content on Mint infringes your copyright, send us a notice with the work concerned, the infringing URL and your contact details.','We review every report and remove infringing content promptly. Repeat infringers lose marketplace access.','Counter-notices are accepted where content was removed in error.'],
+};
+const fa = {
+  terms:['با استفاده از Mint این شرایط را می‌پذیرید. Mint ابزار طراحی، قالب، ساخت با هوش مصنوعی و بازارچه فایل‌های دیجیتال ارائه می‌دهد. Mint یک پلتفرم طراحی دیجیتال است و در این نسخه کالای فیزیکی تولید نمی‌کند.','مسئولیت محتوایی که بارگذاری و منتشر می‌کنید با خودتان است. محتوایی که حق استفاده از آن را ندارید بارگذاری نکنید.','پلن‌های پولی تا زمان لغو به‌صورت خودکار تمدید می‌شوند. هر زمان می‌توانید از تنظیمات لغو کنید و تا پایان دوره پرداخت‌شده امکانات پولی را نگه دارید.'],
+  privacy:['ما حداقل داده لازم برای اجرای Mint را جمع می‌کنیم: اطلاعات حساب، پروژه‌ها و فایل‌های شما و آمار پایه استفاده. داده شخصی شما را نمی‌فروشیم.','فایل‌های بارگذاری‌شده به‌صورت خصوصی ذخیره می‌شوند. پیش‌نمایش‌ها تنها زمانی عمومی می‌شوند که طرحی را منتشر کنید. هر زمان می‌توانید داده‌هایتان را از تنظیمات خروجی بگیرید یا حذف کنید.','پردازش پرداخت توسط ارائه‌دهنده پرداخت انجام می‌شود. Mint هرگز شماره کامل کارت را روی سرورهای خود ذخیره نمی‌کند.'],
+  licenses:['طرح‌هایی که از بوم خالی می‌سازید متعلق به شماست. می‌توانید شخصی و در پلن‌های پولی به‌صورت تجاری از آن‌ها استفاده کنید.','هر قالب مجوز مخصوص خود را دارد که روی همان قالب نمایش داده می‌شود. قالب‌های رایگان جز در موارد ذکرشده برای استفاده شخصی‌اند.','فایل‌های بازارچه مجوزی دارند که فروشنده تعیین می‌کند و پیش از خرید نمایش داده می‌شود. فروش مجدد یک فایل بدون تغییر هرگز مجاز نیست.'],
+  copyright:['اگر فکر می‌کنید محتوایی در Mint حق نشر شما را نقض می‌کند، اطلاعیه‌ای شامل اثر مورد نظر، نشانی محتوای ناقض و راه تماس خود برای ما بفرستید.','هر گزارش را بررسی می‌کنیم و محتوای ناقض را به‌سرعت حذف می‌کنیم. متخلفان تکراری دسترسی بازارچه را از دست می‌دهند.','در مواردی که محتوا به‌اشتباه حذف شده باشد، اعتراض پذیرفته می‌شود.'],
+};
+const body = (lang==='fa' ? fa : en)[doc] || (lang==='fa'?fa:en).terms;
+const titles = { terms:t('lg.terms'), privacy:t('lg.privacy'), licenses:t('lg.licenses'), copyright:t('lg.copyright') }; %>
+
+<div class="wrap" style="padding-top:34px;padding-bottom:56px;max-width:860px">
+  <div class="tabs" style="margin-bottom:26px">
+    <% Object.entries(titles).forEach(([k,v]) => { %>
+      <a href="/legal?doc=<%= k %>" class="<%= doc===k?'on':'' %>"><%= v %></a>
+    <% }) %>
+  </div>
+  <div class="card pad-lg">
+    <h1 style="font-size:27px;margin-bottom:8px"><%= titles[doc] || titles.terms %></h1>
+    <p class="muted" style="font-size:12.5px;margin-bottom:22px"><%= t('lg.updated') %></p>
+    <% body.forEach(pp => { %><p class="t2" style="margin-bottom:16px;line-height:1.9;font-size:14px"><%= pp %></p><% }) %>
+    <div class="card pad" style="margin-top:22px;background:rgba(251,191,36,.07);border-color:rgba(251,191,36,.28)">
+      <p style="font-size:12.5px;color:#FDE68A"><%= t('lg.note') %></p>
+    </div>
+  </div>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>

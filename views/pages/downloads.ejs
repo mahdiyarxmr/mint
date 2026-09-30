@@ -1,0 +1,22 @@
+<%- include('../partials/head') %>
+<div class="shell">
+  <%- include('../partials/sidebar') %>
+  <main>
+    <div class="phead"><h1><%= t('dl.title') %></h1><p><%= t('dl.lede') %></p></div>
+    <div class="list">
+      <% items.forEach(d => { %>
+        <div class="lrow">
+          <img src="/img/<%= d.img %>.webp" alt="<%= L(d,'title') %>" loading="lazy">
+          <div style="flex:1;min-width:0">
+            <b style="font-size:13.5px"><%= L(d,'title') %></b>
+            <p class="muted" style="font-size:12px"><span class="ltr"><%= d.res %></span> · <span class="ltr"><%= d.size %></span> · <%= L(d,'date') %></p>
+          </div>
+          <span class="badge badge-pack"><%= d.format %></span>
+          <button class="btn btn-ghost btn-sm js-toast" data-msg="<%= t('dl.downloading') %> <%= L(d,'title') %>"><%- icon('download') %> <%= t('dl.get') %></button>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/foot') %>
+<%- include('../partials/tail') %>
